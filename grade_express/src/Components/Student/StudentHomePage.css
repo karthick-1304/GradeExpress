@@ -1,0 +1,189 @@
+
+.student-outer-container{
+        /* background-color: rgb(2, 32, 2); */
+        background-color: rgb(25, 47, 27);
+        /* background-color: rgb(3, 47, 3); */
+        color: white;
+        height: 200vh;
+      
+}
+.navbar{
+    position: sticky;
+    top:0;
+    z-index: 9999;
+}
+.main1{
+    background-color:azure;
+    padding: 1px;
+    margin: 1% 5%;
+
+    color: black;
+    border-radius: 10px;
+
+}
+.student-head{
+    text-align:center;
+    margin-top:6%;
+}
+.profile-total{
+    display: flex;
+    height: 30%;
+    margin: 20px;
+    justify-content: center;
+    gap: 3%;
+    padding: 8px;
+    margin-bottom: 30px;
+}
+
+.profile-table {
+    color: black;
+    border: white;
+    border-radius: 10px;
+    width: 50%;
+    /* height: 10px; */
+    font-family: 'Arial', sans-serif;
+}
+
+.profile-table th,.profile-table td{
+    padding-left: 20px; 
+    font-size: 20px;
+    border-bottom: 1px solid black;
+}
+.profile-table th{
+    font-weight: bold;
+}
+
+.profile-table tr:hover {
+    background-color: rgb(196, 181, 181) /* Light grey on hover */
+}
+.profile-left{
+    display: flex;
+    flex-direction: column;
+    width: 16%;
+}
+
+.profile-left img{
+    border-radius:8%;
+    margin-bottom: 16px;
+    border: 1px black solid;
+  }
+  .profile-left h1{
+    text-align: center;
+  }
+
+  .course-table{
+    background-color:azure;
+    width: 90%;
+    padding: 1px;
+    margin: 1% 5%;
+    color: black;
+    border-radius: 10px;
+}
+.course-table {
+    width: 90%;
+    border-collapse: collapse;
+    padding: 1px;
+    margin: 1% 5%;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    text-align: left;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .course-table thead {
+    background-color:rgba(0, 0, 0, 0.837);
+    color: white;
+    text-transform: uppercase;
+  }
+  
+  .course-table th, 
+  .course-table td {
+    padding: 12px 15px;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .course-table tbody tr:nth-child(even) {
+    background-color: #f3f3f3;
+  }
+  
+  .course-table tbody tr:hover {
+    background-color: #ffcccb;
+    transition: 0.3s ease-in-out;
+  }
+  
+  .course-table a {
+    text-decoration: none;
+    color: #ff5733;
+    font-weight: bold;
+  }
+  
+  .course-table a:hover {
+    text-decoration: underline;
+    color: #c70039;
+  }
+  
+  .search-container {
+    display: flex;
+    width: 90%;
+    align-items: center;
+    padding-left: 13%;
+    gap: 10px;
+    margin:40px 20px;
+  }
+  
+  /* Dropdown Styling */
+  .search-dropdown {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ff5733;
+    width: 30%;
+    border-radius: 8px;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  .search-dropdown:hover {
+    border-color: #c70039;
+  }
+  
+  /* Search Input Container */
+  .search-input-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Search Input Styling */
+  .search-input {
+    padding: 10px 40px 10px 10px; /* Space for the icon */
+    font-size: 16px;
+    border: 2px solid #ff5733;
+    border-radius: 8px;
+    outline: none;
+    width: 90%;
+  }
+  
+  /* Search Icon Styling */
+  .search-icon {
+    position: absolute;
+    right: 10px;
+    font-size: 18px;
+    color: #ff5733;
+    cursor: pointer;
+  }
+  
+  /* Focus Effect */
+  .search-input:focus {
+    border-color: #c70039;
+  }
+  
+  .search-dropdown:focus {
+    border-color: #c70039;
+  }
+  
