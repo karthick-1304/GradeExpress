@@ -1,0 +1,46 @@
+/* Login.css */
+
+.login-card {
+    width: 30%;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    background-color: #ffffff;
+    color: black;
+  }
+  
+  .login-h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .login-form-control {
+    padding: 0.8rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+  
+  /* Button styling */
+ 
+  
+  /* Eye Icon styling */
+  .login-eye-icon {
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  
+  /* Forgot Password link */
+  .login-text-center a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  
+  /* Container for centering the form */
+  .login-container {
+    padding: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
