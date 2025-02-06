@@ -2,14 +2,28 @@ import React, { useState } from 'react';
 import Header from './Header';
 import './Login.css';  
 import 'font-awesome/css/font-awesome.min.css'; // Import Font Awesome
+import axios from 'axios';
 
 const Login = () => {
   const [regno, setRegno] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const isDisabled = !regno || !password;
-  function handleLogin(){
-      console.log(regno+" "+password);
+  
+  async function handleLogin(){
+      const role=!isNaN(regno[0])?"Student":"Staff";
+      const extractedData={
+        regno,password
+      }
+      console.log(extractedData);
+      try {
+        const response = await axios.post("http://localhost:5000/login", extractedData, {
+          headers: { "Content-Type": "application/json" },
+        });
+        console.log(response.data.message);
+      } catch (error) {
+        console.error("Loginstage:Error fetching data:", error);
+      }
   }
 
   return (
@@ -27,7 +41,7 @@ const Login = () => {
               className="login-form-control" 
               placeholder="Enter Reg No"
               value={regno} 
-              onChange={(e) => setRegno(e.target.value)} 
+              onChange={(e) => setRegno(e.target.value.trim())} 
             />
           </div>
 
@@ -39,7 +53,7 @@ const Login = () => {
               className="login-form-control" 
               placeholder="Enter Password"
               value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
+              onChange={(e) => setPassword(e.target.value.trim())} 
             />
             <i 
               className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'} login-eye-icon`} 

@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const pool= new Pool({
+  const pool= new Pool({
     host: 'localhost', 
     port: 5432, 
     user: 'postgres', // Replace with your PostgreSQL username
@@ -29,10 +29,10 @@ app.post("/upload", async (req, res) => {
 
     for (let student of students) {
         console.log(student);
-      /* await client.query(
-        "INSERT INTO users_info (regno, name,password,role, email, dept) VALUES ($1, $2, $3, $4,$5,$6)",
-        [student.RegNo, student.Name, student.Password,student.Role,student.Email, student.Department]
-      ); */
+      await client.query(
+        "INSERT INTO students_info (regno, name,password, email, dept,tutor_name,phone_no,year_of_joining) VALUES ($1, $2, $3, $4,$5,$6,$7,$8)",
+        [student.RegNo, student.Name, student.Password,student.Email, student.Department,student.Tutor_name,student.Phone_no,student.year_of_joining]
+      );
     }
 
     client.release();

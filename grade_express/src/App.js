@@ -36,6 +36,8 @@ function App() {
         Name: headers.indexOf("Name"),
         Email: headers.indexOf("Email"),
         Department: headers.indexOf("Department"),
+        Tutor_name:headers.indexOf("Tutor_name"),
+        Phone_no:headers.indexOf("Phone_number")
       };
   
       if (Object.values(requiredIndexes).includes(-1)) {
@@ -47,9 +49,11 @@ function App() {
         RegNo: row[requiredIndexes.RegNo],
         Name: row[requiredIndexes.Name],
         Password:"123",
-        Role:"Student",
         Email: row[requiredIndexes.Email],
         Department: row[requiredIndexes.Department],
+        Tutor_name:row[requiredIndexes.Tutor_name],
+        Phone_no:row[requiredIndexes.Phone_no],
+        year_of_joining:2022
       }));
   
       console.log("Extracted Data:", extractedData);
@@ -68,6 +72,7 @@ function App() {
   
     reader.readAsBinaryString(file);
   }
+
   
    return (
     <div className="App">
