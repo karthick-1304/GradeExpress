@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from "./Components/Common_pages/Home";
 import {Routes,Route} from "react-router-dom"
+import { useState } from 'react';
 import StudentHomePage from './Components/Student/StudentHomePage';
 import AboutUs from './Components/Common_pages/AboutUs';
 import Contact from './Components/Common_pages/Contact';
@@ -9,7 +10,11 @@ import axios from 'axios';
 import * as XLSX from "xlsx";
 import Login from './Components/Common_pages/Login';
 import Header from './Components/Common_pages/Header';
+import { Toaster, toast } from "react-hot-toast";
+import InchargeHomePage from './Components/Incharge/InchargeHomePage';
+import AddCourse from './Components/Incharge/AddCourse';
 function App() {
+   const [user,setUser]=useState({});
   async function get() {
     const fileInput = document.querySelector("#file");
     const file = fileInput.files[0];
@@ -80,11 +85,14 @@ function App() {
         <Route path="/" element={<Home get={get}/>}></Route>
         <Route path='/aboutUs' element={<AboutUs/>}></Route>
         <Route path='/contact' element={<Contact/>}></Route>
-        <Route path='/login' element={<Login/>}></Route>
+        <Route path='/login' element={<Login user={user} setUser={setUser}/>}></Route>
         <Route path='/features' element={<Features/>}></Route>
         <Route path='/header' element={<Header/>}></Route>
-        <Route path='/studentHomePage' element={<StudentHomePage/>}></Route>
+        <Route path='/studentHomePage' element={<StudentHomePage user={user} setUser={setUser}/>}></Route>
+        <Route path='/staffHomePage' element={<InchargeHomePage user={user} setUser={setUser}/>}></Route>
+        <Route path='/addCourse' element={<AddCourse />}></Route>
      </Routes>
+     <Toaster/>
     </div>
   );
 }

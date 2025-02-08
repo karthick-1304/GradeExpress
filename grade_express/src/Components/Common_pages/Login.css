@@ -1,7 +1,7 @@
 /* Login.css */
 
 .login-card {
-    width: 30%;
+    width: 80%;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 2rem;
@@ -16,8 +16,8 @@
   
   .login-form-control {
     padding: 0.8rem;
-    border-radius: 5px;
-    margin-bottom: 1rem;
+    border-radius: 10px;
+    /* margin-bottom: 1rem; */
     width: 100%;
   }
   
@@ -40,7 +40,88 @@
   /* Container for centering the form */
   .login-container {
     padding: 5%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    /* align-items: center; */
+  }
+  .toast {
+    background:white; /* ✅ Remove quotes */
+    color: black;
+    width: 400px !important;
+    position: absolute; /* ✅ Ensure correct positioning */
+  }
+  .login-page-outer{
+    display: flex;
+  }
+  .logo-container{
+    /* background-color: aliceblue; */
+    padding: 5%;
+    width: 50%;
+  }
+  .logo-container img{
+    margin-top: 20%;
+    width: 650px;
+    height: 450px;
+  }
+
+  .text-container {
+    position: absolute;
+    top:190px;
+    background-color: white;
+    color: black;
+    border-radius: 15px;
+    left:200px;
+    height: 60px; /* Adjust based on text size */
+    width: 450px;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
+  }
+  
+  .text-box {
+    position: absolute;
+    font-size: 20px;
+    font-weight: bold;
+    animation: moveUp 3s linear infinite;
+  }
+  .round1{
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top:290px;
+    left:430px;
+    width: 3%;
+    height:2%;
+  }
+  .round2{
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top:255px;
+    left:450px;
+    width: 3%;
+    height:2%;
+  }
+  
+  @keyframes moveUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    20% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    80% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
   }

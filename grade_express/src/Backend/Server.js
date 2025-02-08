@@ -3,6 +3,8 @@ const express = require("express");
 const { Pool } = require("pg");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const app = express();
 app.use(cors());
@@ -16,6 +18,57 @@ app.use(bodyParser.json());
     database: 'gradeExpress', // Replace with your PostgreSQL database name
   });
   
+  app.post("/login", async (req, res) => {
+    try {
+      const { regno, password,role } = req.body;
+      const db=(role==='Student')?"students_info":"staff_info";
+      const query = `SELECT * FROM ${db} WHERE regno = $1`; // Use string interpolation
+      const result = await pool.query(query, [regno]); // Use $1 only for values
+      if (result.rows.length === 0) 
+        return res.status(401).json({ message: "Invalid registration number or password" });
+      const user = result.rows[0];
+      const passwordMatch = password===user.password;
+      if (!passwordMatch) 
+        return res.status(401).json({ message: "Invalid registration number or password" });
+      let data;
+      if(role=="Student"){
+        data={
+          regno: user.regno,
+          name: user.name,
+          password:user.password,
+          email: user.email,
+          dept: user.dept,
+          tutor_name: user.tutor_name,
+          phone_no: user.phone_no,
+          year_of_joining: user.year_of_joining
+        }
+      }
+      else{
+        data={
+          regno: user.regno,
+          name: user.name,
+          password:user.password,
+          email: user.email,
+          dept: user.dept,
+          designation:user.designation,
+          phone_no: user.phone_no,
+          // tutor_ward
+        }
+      }
+      // const token = jwt.sign({ regno: user.regno, name: user.name }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  
+      res.json({
+        message: "Login successful",
+        // token: token,
+        user: data
+      });
+    } catch (error) {
+      console.error("Login Error:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+  
+
 
 // API to insert extracted data row by row
 app.post("/upload", async (req, res) => {

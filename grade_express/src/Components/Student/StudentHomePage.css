@@ -54,9 +54,6 @@
     font-weight: bold;
 }
 
-.profile-table tr:hover {
-    background-color: rgb(196, 181, 181) /* Light grey on hover */
-}
 .profile-left{
     display: flex;
     flex-direction: column;

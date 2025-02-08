@@ -2,8 +2,9 @@ import React from 'react'
 import "./StudentHomePage.css";
 import { Link } from 'react-router-dom';
 import IMG from "./student_jump_img.jpg"
-const StudentHomePage = () => {
-    const student={name:"SELVA",regno:"2212074",Dept:"CSE",password:"Selva@2004",email:"2212074@nec.edu.in",role:"STUDENT"}
+const StudentHomePage = ({user,setUser}) => {
+    console.log("student homePage:",user);
+    const student=user;//{name:"SELVA",regno:"2212074",Dept:"CSE",password:"Selva@2004",email:"2212074@nec.edu.in",role:"STUDENT"}
     const course=[{
         domain:"BLOCKCHAIN",name:"SOLIDITY",isCredit:true,code:"1234",week:12,st_date:"12/7/2024",end_date:"30/11/2025",instructor:"Mr.Mohaideen",score:89.09,grade:"A+",topper:"ABC",drive_link:"abcd.com" },{
             domain:"PERSONAL DEVELOPMENT",name:"PROFESSIONAL ENGLISH",isCredit:false,code:"2235",week:12,st_date:"12/7/2024",end_date:"30/11/2025",instructor:"Mr.Mohaideen",score:90.03,grade:"-",topper:"ABC",drive_link:"abcd.com" },{
@@ -13,12 +14,11 @@ const StudentHomePage = () => {
         
         <nav className="navbar navbar-expand-lg shadow py-3">
             <div className="container">
-            <h1 style={{ color: "orangered", fontSize: "23px" }}>WELCOME SELVARAJ R!</h1>
+            <h1 style={{ color: "orangered", fontSize: "23px" }}>WELCOME {student.name}!</h1>
             <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul className="navbar-nav gap-4">
                 <Link to="/" className="text-decoration-none"><li className="nav-item">Home</li></Link>
                 <Link to="/aboutUs" className="text-decoration-none"><li className="nav-item">Enroll</li></Link>
-                <Link to="/features" className="text-decoration-none"><li className="nav-item"></li></Link>
                 <Link to="/contact" className="text-decoration-none"><li className="nav-item">Result</li></Link>
                 <Link to="/" className="text-decoration-none"><li className="nav-item">Logout</li></Link>
                 </ul>
@@ -30,7 +30,7 @@ const StudentHomePage = () => {
             <div className='profile-total'>
                 <div className='profile-left'>
                     <img src={IMG} alt=""/>
-                    <h1>Student</h1>
+                    <h1>{student.role}</h1>
                 </div>
             
                 <table className='profile-table' >
@@ -43,16 +43,12 @@ const StudentHomePage = () => {
                         <td>{student.regno}</td>
                     </tr>
                     <tr>
-                        <th>Password</th>
-                        <td>{student.password}</td>
-                    </tr>
-                    <tr>
                         <th>Email</th>
                         <td>{student.email}</td>
                     </tr>
                     <tr>
                         <th>Department</th>
-                        <td>{student.Dept}</td>
+                        <td>{student.dept}</td>
                     </tr>
                 </table>
             </div>
@@ -70,7 +66,6 @@ const StudentHomePage = () => {
                     </select>
                     <div className="search-input-container">
                         <input type="text" className="search-input" placeholder="Search by..." />
-                        <i className="fas fa-search search-icon"></i> 
                     </div>
                 </div>
 
