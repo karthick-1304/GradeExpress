@@ -85,7 +85,6 @@ app.post("/upload", async (req, res) => {
         [student.RegNo, student.Name, student.Password,student.Email, student.Department,student.Tutor_name,student.Phone_no,student.year_of_joining]
       );
     }
-
     client.release();
     res.status(200).json({ message: "Data inserted successfully!" });
   } catch (error) {
@@ -99,6 +98,65 @@ app.get('/getStaffs', async (req, res) => {
     const result = await pool.query('SELECT * FROM staff_info');
     res.json(result.rows);
   } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+app.get('/getCourses', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM course_details');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+app.post('/addCourse', async (req, res) => {
+  const { domain, name, iscredit, code, no_of_weeks, st_date, end_date, instructor, success_rate, prev_topper, assignment_drive_link } = req.body;
+  try {
+    await pool.query(
+      'INSERT INTO course_details (domain, name, iscredit, code, no_of_weeks, st_date, end_date, instructor, success_rate, prev_topper, assignment_drive_link) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
+      [domain, name.toUpperCase(), iscredit, code, no_of_weeks, st_date, end_date, instructor, success_rate, prev_topper, assignment_drive_link]
+    );
+
+    res.status(201).send('Course added successfully');
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+});
+
+
+app.put('/editCourse/:code', async (req, res) => {
+  const {code}=req.params;
+  const {  domain, name, iscredit, no_of_weeks, st_date, end_date, instructor, success_rate, prev_topper, assignment_drive_link } = req.body;
+  try {
+      const result = await pool.query(
+          `UPDATE course_details 
+           SET domain = $1, name = $2, iscredit = $3, no_of_weeks = $4, st_date = $5, end_date = $6, 
+               instructor = $7, success_rate = $8, prev_topper = $9, assignment_drive_link = $10
+           WHERE code = $11`,
+          [domain, name, iscredit, no_of_weeks, st_date, end_date, instructor, success_rate, prev_topper, assignment_drive_link, code]
+      );
+
+      if (result.rowCount === 0) {
+          return res.status(404).json({ message: "Course not found" });
+      }
+
+      res.json({ message: "Course updated successfully" });
+  } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/deleteCourse/:code', async (req, res) => {
+  const { code } = req.params;
+  try {
+    await pool.query('DELETE FROM course_details WHERE code = $1', [code]);
+    res.send('Course deleted');
+  } catch (err) {
+    console.log(err);
     res.status(500).send(err.message);
   }
 });

@@ -1,130 +1,194 @@
-import React from 'react'
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./AddCourse.css";
-import Table from "react-bootstrap/Table";
-
+import axios from 'axios';
+import { Table, Button, Modal, Form } from 'react-bootstrap';
 
 const AddCourse = () => {
-    const [courses, setCourses] = useState([
-        {
-          domain: "Computer Science",
-          name: "React Development",
-          isCredit: true,
-          code: "CS101",
-          no_of_weeks: 8,
-          st_date: "2024-02-10",
-          end_date: "2024-04-10",
-          instructor: "John Doe",
-          success_rate: 85.5,
-          prev_topper: "Alice",
-          assignment_drive_link: "https://example.com/assignments",
-        },
-        {
-          domain: "Data Science",
-          name: "Machine Learning",
-          isCredit: false,
-          code: "DS202",
-          no_of_weeks: 12,
-          st_date: "2024-03-01",
-          end_date: "2024-05-24",
-          instructor: "Jane Smith",
-          success_rate: 92.3,
-          prev_topper: "Bob",
-          assignment_drive_link: "https://example.com/ml-course",
-        },
-      ]);
+    const [courses, setCourses] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [editMode, setEditMode] = useState(false);
+    const [selectedCourse, setSelectedCourse] = useState(null);
     const [formData, setFormData] = useState({
         domain: "",
         name: "",
-        isCredit: false,
+        iscredit: false,
         code: "",
         no_of_weeks: "",
-        st_date: "",
+        st_date: new Date().toISOString().split('T')[0], // Default to current date
         end_date: "",
         instructor: "",
         success_rate: "",
         prev_topper: "",
         assignment_drive_link: "",
-      });
-    
-      // Handle input change
-      const handleChange = (e) => {
+    });
+    const fetchCourses = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/getCourses');
+            setCourses(response.data);
+        } catch (error) {
+            console.error("Error fetching courses:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCourses();
+    }, []);
+
+    const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData({
-          ...formData,
-          [name]: type === "checkbox" ? checked : value,
+            ...formData,
+            [name]: type === "checkbox" ? checked : value,
         });
-      };
-    
-      // Handle form submission
-      const handleSubmit = (e) => {
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
-        // You can send formData to an API here
-      };
-  return (
-    <div className='outer-container'>
-        <h1 className='course-page-head'>Course List</h1>
-        <div>
-        <div className='form'>
-            <button>Add Course</button>
-           {/*  <form onSubmit={handleSubmit}>
-                <input type="text" name="domain" placeholder="Domain" value={formData.domain} onChange={handleChange} required />
-                <input type="text" name="name" placeholder="Course Name" value={formData.name} onChange={handleChange} required />
-                <label>
-                <input type="checkbox" name="isCredit" checked={formData.isCredit} onChange={handleChange} />
-                Credit Course
-                </label>
-                <input type="text" name="code" placeholder="Course Code" value={formData.code} onChange={handleChange} required />
-                <input type="number" name="no_of_weeks" placeholder="Number of Weeks" value={formData.no_of_weeks} onChange={handleChange} required />
-                <input type="date" name="st_date" value={formData.st_date} onChange={handleChange} required />
-                <input type="date" name="end_date" value={formData.end_date} onChange={handleChange} required />
-                <input type="text" name="instructor" placeholder="Instructor Name" value={formData.instructor} onChange={handleChange} required />
-                <input type="number" step="0.01" name="success_rate" placeholder="Success Rate (%)" value={formData.success_rate} onChange={handleChange} required />
-                <input type="text" name="prev_topper" placeholder="Previous Topper (Optional)" value={formData.prev_topper} onChange={handleChange} />
-                <input type="url" name="assignment_drive_link" placeholder="Assignment Drive Link" value={formData.assignment_drive_link} onChange={handleChange} required />
-                <button type="submit">Submit</button>
-            </form> */}
-        </div>
-        <div className="container-fluid ">
-        <table className="course-table">
+        try {
+            if (editMode) {
+                await axios.put(`http://localhost:5000/editCourse/${selectedCourse.code}`, formData);
+            } else {
+                await axios.post('http://localhost:5000/addCourse', formData);
+            }
+            fetchCourses();
+            handleCloseModal();
+        } catch (error) {
+            console.error("Error submitting course:", error);
+        }
+    };
+    
+    const handleAddCourse = () => {
+        setEditMode(false);
+        setFormData({
+            domain: "",
+            name: "",
+            iscredit: false,
+            code: "",
+            no_of_weeks: "",
+            st_date: new Date().toISOString().split('T')[0], 
+            end_date: "",
+            instructor: "",
+            success_rate: "",
+            prev_topper: "",
+            assignment_drive_link: "",
+        });
+        setShowModal(true);
+    };
+
+    const handleEditCourse = (course) => {
+        setEditMode(true);
+        setSelectedCourse(course);
+        setFormData({
+            ...course,
+            st_date: course.st_date.split('T')[0],  
+            end_date: course.end_date.split('T')[0],
+        });
+        setShowModal(true);
+    };
+
+    const handleDeleteCourse = async (code) => {
+        try {
+            await axios.delete(`http://localhost:5000/deleteCourse/${code}`);
+            fetchCourses();
+        } catch (error) {
+            console.error("Error deleting course:", error);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setSelectedCourse(null);
+    };
+
+    return (
+        <div className='outer-container'>
+            <div className="admin-page">
+                <h1>Course Management</h1>
+                <Button onClick={handleAddCourse}>Add Course</Button>
+                <Table striped bordered hover>
                     <thead>
                         <tr>
-                        <th>Course Code</th>
-                        <th>Course Name</th>
-                        <th>Domain</th>
-                        <th>Instructor</th>
-                        <th>No of Weeks</th>
-                        <th>Success Rate</th>
-                        <th>Previous Topper</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Credit Type</th>
-                        <th>Assignment URL</th>
+                            <th>Course Code</th>
+                            <th>Name</th>
+                            <th>Domain</th>
+                            <th>Instructor</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {courses.map((item, index) => (
-                        <tr key={index}>
-                            <td>{item.code}</td>
-                            <td>{item.name}</td>
-                            <td>{item.domain}</td>
-                            <td>{item.instructor}</td>
-                            <td>{item.no_of_weeks}</td>
-                            <td>{item.success_rate}</td>
-                            <td>{item.prev_topper}</td>
-                            <td>{item.st_date}</td>
-                            <td>{item.end_date}</td>
-                            <td>{item.isCredit ? "Yes" : "No"}</td>
-                            <td><a href={item.drive_link} target="_blank" rel="noopener noreferrer">Drive Link</a></td>
-                        </tr>
+                        {courses.map((course) => (
+                            <tr key={course.code}>
+                                <td>{course.code}</td>
+                                <td>{course.name}</td>
+                                <td>{course.domain}</td>
+                                <td>{course.instructor}</td>
+                                <td>
+                                    <Button variant="warning" onClick={() => handleEditCourse(course)}>Edit</Button>{' '}
+                                    <Button variant="danger" onClick={() => handleDeleteCourse(course.code)}>Delete</Button>
+                                </td>
+                            </tr>
                         ))}
                     </tbody>
-                    </table>
-         </div>
-         </div>
-    </div>
-  )
-}
+                </Table>
+            </div>
 
-export default AddCourse
+            <Modal show={showModal} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{editMode ? "Edit Course" : "Add Course"}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group>
+                            <Form.Label>Course Code</Form.Label>
+                            <Form.Control type="text" name="code" value={formData.code} onChange={handleChange} required disabled={editMode} />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Course Name</Form.Label>
+                            <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Domain</Form.Label>
+                            <Form.Control type="text" name="domain" value={formData.domain} onChange={handleChange} required />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Instructor</Form.Label>
+                            <Form.Control type="text" name="instructor" value={formData.instructor} onChange={handleChange} required />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>No. of Weeks</Form.Label>
+                            <Form.Control type="number" name="no_of_weeks" value={formData.no_of_weeks} onChange={handleChange} required />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Start Date</Form.Label>
+                            <Form.Control type="date" name="st_date" value={formData.st_date} onChange={handleChange} required />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>End Date</Form.Label>
+                            <Form.Control type="date" name="end_date" value={formData.end_date} onChange={handleChange} required />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Success Rate (%)</Form.Label>
+                            <Form.Control type="number" name="success_rate" value={formData.success_rate} onChange={handleChange} required />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Previous Topper</Form.Label>
+                            <Form.Control type="text" name="prev_topper" value={formData.prev_topper} onChange={handleChange} />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Assignment Drive Link</Form.Label>
+                            <Form.Control type="text" name="assignment_drive_link" value={formData.assignment_drive_link} onChange={handleChange} required />
+                        </Form.Group>
+                        <Form.Group controlId="iscredit">
+                            <Form.Check type="checkbox" label="Credit Course" name="iscredit" checked={formData.iscredit} onChange={handleChange} />
+                        </Form.Group>
+                        <Button variant="primary" type="submit">
+                            {editMode ? "Update" : "Add"}
+                        </Button>
+                    </Form>
+                </Modal.Body>
+            </Modal>
+        </div>
+    );
+};
+
+export default AddCourse;

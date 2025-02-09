@@ -2,9 +2,10 @@
     font-weight: 400;
 }
 .outer-container {
-  background-image: url('../../Asserts/bg7.jpg'); 
-  background-size: cover;
-  background-position: center;
+  background-image: url('../../Asserts/bg4.webp'); 
+  /* background-size:contain; */
+  background-size : cover;
+  /* background-position: center; */
   background-repeat: no-repeat;
   height: 240vh;
   color: white;
@@ -24,6 +25,7 @@
   position: sticky;
   top: 0;
   opacity: 1;
+  background-color: rgb(5, 5, 44);
   z-index: 9999;  /* Ensure it stays above other elements */
 }
 .main{
