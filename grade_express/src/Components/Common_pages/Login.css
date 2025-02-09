@@ -39,7 +39,7 @@
   
   /* Container for centering the form */
   .login-container {
-    padding: 5%;
+    padding: 2% 9%;
     width: 50%;
     display: flex;
     flex-direction: column;

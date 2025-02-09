@@ -8,7 +8,7 @@ const InchargeHomePage = ({user,setUser}) => {
     const studentsList=[
         {regno:"2212074",name:"SELVARAJ R",credits:15,completed:3,ongoing:2},{regno:"2212075",name:"HEMALATHA",credits:20,completed:4,ongoing:2},{regno:"2212076",name:"PONKARTHIKEYAN P",credits:20,completed:5,ongoing:2},{regno:"2212077",name:"SANKARANARAYANAN",credits:15,completed:3,ongoing:3}]
   return (
-    <div className='outer-container'>
+    <div className='outer-container-incharge'>
         <nav className="navbar navbar-expand-lg shadow py-3">
             <div className="container">
             <h1 style={{ color: "orangered", fontSize: "23px" }}>WELCOME {student.name.toUpperCase()} !</h1>

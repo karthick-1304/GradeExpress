@@ -68,8 +68,6 @@ app.use(bodyParser.json());
     }
   });
   
-
-
 // API to insert extracted data row by row
 app.post("/upload", async (req, res) => {
   try {
@@ -95,6 +93,67 @@ app.post("/upload", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+app.get('/getStaffs', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM staff_info');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+
+app.post('/addStaffs', async (req, res) => {
+  const { regno, name, email, department, designation, password } = req.body;
+  try {
+    await pool.query('INSERT INTO staff_info (regno, name, email, dept, designation, password) VALUES ($1, $2, $3, $4, $5, $6)', [regno, name.toUpperCase(), email, department, designation, password]);
+    res.status(201).send('Staff added');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+app.put('/editStaffs', async (req, res) => {
+  const { regno,name, email, dept, designation, password } = req.body;
+  try {
+    await pool.query('UPDATE staff_info SET name = $1, email = $2, dept = $3, designation = $4, password = $5 WHERE regno = $6', [name, email, dept, designation, password, regno]);
+    res.send('Staff updated');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+app.delete('/deleteStaffs/:regno', async (req, res) => {
+  const { regno } = req.params;
+  try {
+    await pool.query('DELETE FROM staff_info WHERE regno = $1', [regno]);
+    res.send('Staff deleted');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+app.get('/getStudents', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM students_info');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+app.delete('/deletStudents/:regno', async (req, res) => {
+  const { regno } = req.params;
+  try {
+    await pool.query('DELETE FROM students_info WHERE regno = $1', [regno]);
+    res.send('Student deleted');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

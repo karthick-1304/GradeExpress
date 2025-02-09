@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 const Header = ({ get }) => {
   return (
     <nav className="navbar navbar-expand-lg shadow py-3">
-      <div className="container">
+      <div className="container container-header">
         <h1>Grade Express</h1>
         <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul className="navbar-nav gap-4">

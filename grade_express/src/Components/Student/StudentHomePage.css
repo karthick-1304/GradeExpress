@@ -1,8 +1,9 @@
 
 .student-outer-container{
-        /* background-color: rgb(2, 32, 2); */
-        background-color: rgb(25, 47, 27);
-        /* background-color: rgb(3, 47, 3); */
+  background-image: url('../../bg1.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
         color: white;
         height: 200vh;
       

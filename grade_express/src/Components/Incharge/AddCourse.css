@@ -12,3 +12,12 @@
 .coursee-table thead,.course-table tbody{
     font-size: 15px;
 }
+
+.outer-container-incharge {
+  background-image: url('../../bg1.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 240vh;
+  color: white;
+}

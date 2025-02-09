@@ -13,6 +13,7 @@ import Header from './Components/Common_pages/Header';
 import { Toaster, toast } from "react-hot-toast";
 import InchargeHomePage from './Components/Incharge/InchargeHomePage';
 import AddCourse from './Components/Incharge/AddCourse';
+import AdminPage from './Components/Admin/AdminPage';
 function App() {
    const [user,setUser]=useState({});
   async function get() {
@@ -62,7 +63,7 @@ function App() {
       }));
   
       console.log("Extracted Data:", extractedData);
-      
+      return;
       // Send data to backend using Axios
       try {
         const response = await axios.post("http://localhost:5000/upload", extractedData, {
@@ -82,7 +83,7 @@ function App() {
    return (
     <div className="App">
      <Routes>
-        <Route path="/" element={<Home get={get}/>}></Route>
+        <Route path="/" element={<Home />}></Route>
         <Route path='/aboutUs' element={<AboutUs/>}></Route>
         <Route path='/contact' element={<Contact/>}></Route>
         <Route path='/login' element={<Login user={user} setUser={setUser}/>}></Route>
@@ -91,6 +92,7 @@ function App() {
         <Route path='/studentHomePage' element={<StudentHomePage user={user} setUser={setUser}/>}></Route>
         <Route path='/staffHomePage' element={<InchargeHomePage user={user} setUser={setUser}/>}></Route>
         <Route path='/addCourse' element={<AddCourse />}></Route>
+        <Route path='/adminHomePage' element={<AdminPage get={get} />}></Route>
      </Routes>
      <Toaster/>
     </div>

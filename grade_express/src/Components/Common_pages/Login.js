@@ -5,7 +5,6 @@ import 'font-awesome/css/font-awesome.min.css'; // Import Font Awesome
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from "react-hot-toast";
-import img from "./gif-for-presentation-83.gif";
 
 
 const Login = ({user,setUser}) => {
@@ -24,16 +23,26 @@ const Login = ({user,setUser}) => {
       const extractedData={
         regno,password,role
       }
+      
       try {
-        const response = await axios.post("http://localhost:5000/login", extractedData, {
-          headers: { "Content-Type": "application/json" },
-        });
-         console.log(response.data);
-        if(role=='Student')
-            navigae("/studentHomePage");  
-        else if(role=='Staff')
-          navigae("/staffHomePage");
-        setUser({ ...response.data.user, role:role });
+        if(role=='Admin'){
+          if(regno==='admin@nec'&&password=='123')
+              navigae("/adminHomePage");
+          else  
+          throw new Error("Invalid admin credentials");
+        }
+        else{
+          const response = await axios.post("http://localhost:5000/login", extractedData, {
+            headers: { "Content-Type": "application/json" },
+          });
+          console.log(response.data);
+          if(role=='Student')
+              navigae("/studentHomePage");  
+          else if(role=='Staff')
+            navigae("/staffHomePage");
+          
+          setUser({ ...response.data.user, role:role });
+        }
         toast.success("Login successfully!", {
           position: "top-center",
           duration: 5000,
@@ -71,7 +80,6 @@ const Login = ({user,setUser}) => {
       <Header />
       <div className='login-page-outer'>
       <div className='logo-container'>
-            <img src={img} alt="gif" />
           </div>
         <div className="login-container">
           <div className="login-card">  

@@ -1,16 +1,17 @@
 *{
     font-weight: 400;
 }
-.outer-container{
-  /* background-color: rgb(2, 32, 2); */
-  background-color: rgb(25, 47, 27);
-  /* background-color: rgb(3, 47, 3); */
-  color: white;
+.outer-container {
+  background-image: url('../../bg10.avif'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   height: 240vh;
+  color: white;
 }
 .heading{
   text-align: left;
- padding: 8%;
+ padding: 8% 4%;  
   width: 60%;
   padding-bottom: 0;
   margin-bottom: 0;
@@ -22,7 +23,6 @@
 .navbar {
   position: sticky;
   top: 0;
-  background-color: rgb(25, 47, 27);
   opacity: 1;
   z-index: 9999;  /* Ensure it stays above other elements */
 }
@@ -40,6 +40,7 @@
 }
 .home-img img{
   height: 60%;
+  opacity: 0.8;
   padding: 20%;
   padding-bottom:0%;
   /* margin-bottom: -220%; */

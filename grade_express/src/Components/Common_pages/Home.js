@@ -5,7 +5,7 @@ import './Home.css';
 import IMG from "./student_jump_img.jpg";
 import Header from './Header';
 
-const Home = ({ get }) => {
+const Home = () => {
   const features = [
     "Keeps track of a student’s completed and ongoing NPTEL courses including CGPA and Non - CGPA courses.",
     "Right from collecting initial course enrollment details till obtaining scores from the certificates is made easier and is done without any delay.",
@@ -17,7 +17,7 @@ const Home = ({ get }) => {
   return (
     <div className='outer-container'>
       {/* Header Component */}
-      <Header get={get} />
+      <Header />
 
       {/* Main Section */}
       <div className='main'>
@@ -28,7 +28,7 @@ const Home = ({ get }) => {
           {/* Bootstrap Carousel */}
           <Container>
             <Row>
-              <Col md={12}>
+              <Col md={10}>
                 <Carousel className="card">
                   {features.map((feature, index) => (
                     <Carousel.Item key={index}>
