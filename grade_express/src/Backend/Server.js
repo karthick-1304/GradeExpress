@@ -5,7 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-
+const nodemailer = require("nodemailer");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -207,6 +207,64 @@ app.delete('/deletStudents/:regno', async (req, res) => {
   try {
     await pool.query('DELETE FROM students_info WHERE regno = $1', [regno]);
     res.send('Student deleted');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "karuppu10112004@gmail.com",
+    pass: "umubokiovafsssbu"
+  }
+});
+
+app.post("/forgot-password", async (req, res) => {
+  const { regno } = req.body;
+  try {
+    const result = await pool.query("SELECT email, password FROM students_info WHERE regno = $1", [regno]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Register number not found" });
+    }
+
+    const { email, password } = result.rows[0];
+
+    const mailOptions = {
+      from: "karuppu10112004@gmail.com",
+      to: email,
+      subject: "Password Recovery",
+      text: `Hello, your password is: ${password}`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+        return res.status(500).json({ error: "Failed to send email" });
+      } else {
+        console.log("Email sent:", info.response);
+        return res.json({ message: "Password sent to registered email" });
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+app.put('/editProfile', async (req, res) => {
+  const { regno, password, phone_no } = req.body;
+
+  try {
+    await pool.query(
+      'UPDATE students_info SET password = $1, phone_no = $2 WHERE regno = $3',
+      [password, phone_no, regno]
+    );
+
+    res.send('Profile updated successfully');
   } catch (err) {
     res.status(500).send(err.message);
   }

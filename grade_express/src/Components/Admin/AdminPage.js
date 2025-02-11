@@ -79,13 +79,14 @@ const AdminPage = ({get}) => {
   return (
     <div className='outer-container'>
         <div className="admin-page">
-      <h1>Admin Page</h1>
-      <div className="file-upload">
+      <h1 class="admin-h1">Admin Dashboard</h1>
+      <div className="admin-file-upload">
          <input type="file" id="file" accept=".xls,.xlsx" />
-            <Button onClick={() => get()}>Submit</Button>
+          <Button className='admin-submit-btn'  onClick={() => get()}>Submit</Button>
       </div>
-      <Button onClick={() => openModal()}>Add Staff</Button>
-      <Table striped bordered hover>
+      <h2 class="admin-h2">FACULTIES</h2>
+      <Button className="admin-btn" onClick={() => openModal()}>Add Staff</Button>
+      <Table  className='admin-table'striped bordered hover>
         <thead>
           <tr>
           <th>Register Number</th>
@@ -93,6 +94,7 @@ const AdminPage = ({get}) => {
           <th>Email</th>
           <th>Department</th>
           <th>Designation</th>
+          <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -104,10 +106,10 @@ const AdminPage = ({get}) => {
               <td>{staff.dept}</td>
               <td>{staff.designation}</td>
               <td>
-                <Button variant="warning" onClick={() => openModal(staff)}>
+                <Button class="admin-btn" variant="warning" onClick={() => openModal(staff)}>
                   Edit
                 </Button>{' '}
-                <Button variant="danger" onClick={() => handleDeleteStaff(staff.regno)}>
+                <Button class="admin-btn" variant="danger" onClick={() => handleDeleteStaff(staff.regno)}>
                   Delete
                 </Button>
                 </td>
@@ -117,12 +119,13 @@ const AdminPage = ({get}) => {
       </Table>
 
 
-      <h2>Students</h2>
-      <Table striped bordered hover>
+      <h2 class="admin-h2">STUDENTS</h2>
+      <Table className='admin-table' striped bordered hover>
         <thead>
           <tr>
             <th>Register Number</th>
             <th>Name</th>
+            <th>Department</th>
             <th>Email</th>
             <th>Actions</th>
           </tr>
@@ -132,9 +135,10 @@ const AdminPage = ({get}) => {
             <tr key={student.regno}>
               <td>{student.regno}</td>
               <td>{student.name}</td>
+              <td>{student.dept}</td>
               <td>{student.email}</td>
               <td>
-                <Button variant="danger" onClick={() => handleDeleteStudent(student.regno)}>
+                <Button class="admin-btn" variant="danger" onClick={() => handleDeleteStudent(student.regno)}>
                   Delete
                 </Button>
               </td>
@@ -240,10 +244,10 @@ const AdminPage = ({get}) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={closeModal}>
+          <Button class="admin-btn" variant="secondary" onClick={closeModal}>
             Close
           </Button>
-          <Button
+          <Button class="admin-btn"
             variant="primary"
             onClick={selectedStaff ? handleEditStaff : handleAddStaff}
           >

@@ -62,8 +62,10 @@
   }
   .logo-container img{
     margin-top: 20%;
-    width: 650px;
-    height: 450px;
+    width: 450px;
+    height: 350px;
+    opacity: 0.9;
+    border-radius: 50%;
   }
 
   .text-container {

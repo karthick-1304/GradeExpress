@@ -25,6 +25,7 @@ const AddCourse = () => {
         try {
             const response = await axios.get('http://localhost:5000/getCourses');
             setCourses(response.data);
+            console.log(response.data);
         } catch (error) {
             console.error("Error fetching courses:", error);
         }
@@ -111,7 +112,7 @@ const AddCourse = () => {
                             <th>Course Code</th>
                             <th>Name</th>
                             <th>Domain</th>
-                            <th>Instructor</th>
+                            <th>Credit Type</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -121,7 +122,7 @@ const AddCourse = () => {
                                 <td>{course.code}</td>
                                 <td>{course.name}</td>
                                 <td>{course.domain}</td>
-                                <td>{course.instructor}</td>
+                                <td>{course.iscredit?"Yes":"No"}</td>
                                 <td>
                                     <Button variant="warning" onClick={() => handleEditCourse(course)}>Edit</Button>{' '}
                                     <Button variant="danger" onClick={() => handleDeleteCourse(course.code)}>Delete</Button>

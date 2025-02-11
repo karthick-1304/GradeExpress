@@ -5,6 +5,7 @@ import 'font-awesome/css/font-awesome.min.css'; // Import Font Awesome
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from "react-hot-toast";
+import ROBO from "../../Asserts/robo.jpg"
 
 
 const Login = ({user,setUser}) => {
@@ -74,12 +75,41 @@ const Login = ({user,setUser}) => {
 
     return () => clearInterval(interval);
   }, []);
+  function openForgerPassWord(){
+    if(!regno){
+      toast.error("Enter Register Number", {
+        position: "top-center",
+        duration: 5000,
+        toastClassName: "toast",
+     });
+    }
+    else{
+      axios.post("http://localhost:5000/forgot-password", { regno })
+      .then((response) => {
+        toast.success("Password sent to email", {
+          position: "top-center",
+          duration: 5000,
+          toastClassName: "toast",
+        });
+      })
+      .catch((error) => {
+        toast.error(error.response?.data?.error || "Something went wrong!", {
+          position: "top-center",
+          duration: 5000,
+          toastClassName: "toast",
+        });
+      });
+    }
+
+
+  }
 
   return (
     <div className='outer-container'>
       <Header />
       <div className='login-page-outer'>
       <div className='logo-container'>
+        <img src={ROBO} alt="" />
           </div>
         <div className="login-container">
           <div className="login-card">  
@@ -134,7 +164,7 @@ const Login = ({user,setUser}) => {
 
             {/* Forgot Password */}
             <div className="login-text-center mt-3 d-flex justify-content-center">
-              <a href="#" className="text-decoration-none">Forgot Password?</a>
+              <a href="#"  onClick={()=>openForgerPassWord()} className="text-decoration-none">Forgot Password?</a>
             </div>
             <h6 style={{textAlign:"center",paddingTop:"10px"}}>If it is your first login default password is: 123</h6>
           </div>
