@@ -164,16 +164,16 @@ app.delete('/deleteCourse/:code', async (req, res) => {
 
 
 app.post('/addStaffs', async (req, res) => {
-  const { regno, name, email, department, designation, password } = req.body;
+  const { regno, name, email, dept, designation, password } = req.body;
   try {
-    await pool.query('INSERT INTO staff_info (regno, name, email, dept, designation, password) VALUES ($1, $2, $3, $4, $5, $6)', [regno, name.toUpperCase(), email, department, designation, password]);
+    await pool.query('INSERT INTO staff_info (regno, name, email, dept, designation, password) VALUES ($1, $2, $3, $4, $5, $6)', [regno, name.toUpperCase(), email, dept, designation, password]);
     res.status(201).send('Staff added');
   } catch (err) {
     res.status(500).send(err.message);
   }
 });
 
-app.put('/editStaffs', async (req, res) => {
+app.put('/editStaffs', async (req, res) => {        
   const { regno,name, email, dept, designation, password } = req.body;
   try {
     await pool.query('UPDATE staff_info SET name = $1, email = $2, dept = $3, designation = $4, password = $5 WHERE regno = $6', [name, email, dept, designation, password, regno]);
@@ -221,9 +221,10 @@ const transporter = nodemailer.createTransport({
 });
 
 app.post("/forgot-password", async (req, res) => {
-  const { regno } = req.body;
+  const { regno,role } = req.body;
+  const tempRole=(role=='Student')?'students_info':'staff_info';
   try {
-    const result = await pool.query("SELECT email, password FROM students_info WHERE regno = $1", [regno]);
+    const result = await pool.query(`SELECT email, password FROM ${tempRole} WHERE regno = $1`, [regno]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Register number not found" });
@@ -257,7 +258,6 @@ app.post("/forgot-password", async (req, res) => {
 
 app.put('/editProfile', async (req, res) => {
   const { regno, password, phone_no } = req.body;
-
   try {
     await pool.query(
       'UPDATE students_info SET password = $1, phone_no = $2 WHERE regno = $3',

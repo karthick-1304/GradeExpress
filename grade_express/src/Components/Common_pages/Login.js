@@ -76,7 +76,7 @@ const Login = ({user,setUser}) => {
     return () => clearInterval(interval);
   }, []);
   function openForgerPassWord(){
-    if(!regno){
+    if(!regno||!role){
       toast.error("Enter Register Number", {
         position: "top-center",
         duration: 5000,
@@ -84,7 +84,7 @@ const Login = ({user,setUser}) => {
      });
     }
     else{
-      axios.post("http://localhost:5000/forgot-password", { regno })
+      axios.post("http://localhost:5000/forgot-password", { regno,role })
       .then((response) => {
         toast.success("Password sent to email", {
           position: "top-center",

@@ -77,7 +77,7 @@ const AdminPage = ({get}) => {
 
 
   return (
-    <div className='outer-container'>
+    <div className='outer-container-incharge'>
         <div className="admin-page">
       <h1 class="admin-h1">Admin Dashboard</h1>
       <div className="admin-file-upload">
@@ -225,8 +225,8 @@ const AdminPage = ({get}) => {
               }
             >
               <option value="" hidden>Select Designation</option>
-              <option value="NPTEL STAFF INCHARGE">NPTEL Staff Incharge</option>
-              <option value="STAFF (TUTOR)">Staff(Tutor)</option>
+              <option value="INCHARGE">NPTEL Staff Incharge</option>
+              <option value="TUTOR">Staff(Tutor)</option>
             </Form.Control>
           </Form.Group>
             <Form.Group>

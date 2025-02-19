@@ -1,17 +1,33 @@
-.course-page-head{
-    text-align: center;
-    padding-top: 30px;
-}
-.coursee-table{
+
+.course-table{
+    margin: 20px auto;
     width: 100%;
-    padding: 0;
-    font-size: 11px;
-    margin: 40px;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.coursee-table thead,.course-table tbody{
-    font-size: 15px;
-}
+.course-h2 {
+    color: #F7DBA7;
+    text-align: center;
+    margin-top: 30px;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+.course-table th,.course-table td {
+    text-align: center;
+    padding: 12px;
+    font-size: 1rem;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+  }
+
+  .course-table th{
+    font-weight: 900;
+    color: white;
+    background-color:rgb(63, 62, 62);
+
+  }
 
 .outer-container-incharge {
   background-image: url('../../Asserts/bg1.jpg'); 
@@ -20,4 +36,44 @@
   background-repeat: no-repeat;
   height: 240vh;
   color: white;
+}
+.course-search{
+    width: 80%;
+    margin: 10px ;
+    border-radius: 8px;
+    padding: 8px;
+}
+.course-search-container{
+    margin:0px  20%;
+}
+
+
+.tutorward-table{
+  color: black;
+  margin: 20px auto;
+  width: 90%;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tutorward-table th,.tutorward-table td {
+  text-align: center;
+  padding: 12px;
+  font-size: 1rem;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.tutorward-table th{
+  font-weight: 900;
+  /* background-color: rgba(255, 68, 0, 0.763); */
+  background-color:rgb(63, 62, 62);
+  color: white;
+}
+.tutorward-table tr:hover{
+  background-color: rgba(0, 0, 0, 0.074);
+}
+.addcourse-model-form{
+  z-index: 9999;
 }

@@ -17,7 +17,7 @@ const StudentHomePage = ({user,setUser}) => {
             domain:"PERSONAL DEVELOPMENT",name:"PROFESSIONAL ENGLISH",isCredit:false,code:"2235",week:12,st_date:"12/7/2024",end_date:"30/11/2025",instructor:"Mr.Mohaideen",score:90.03,grade:"-",topper:"ABC",drive_link:"abcd.com" },{
                 domain:"BLOCKCHAIN",name:"BLOCKCHAIN ARCHIETCTURE AND DESIGN",isCredit:true,code:"1236",week:12,st_date:"12/7/2024",end_date:"30/11/2025",instructor:"Mr.Mohaideen",score:89.09,grade:"A+",topper:"ABC",drive_link:"abcd.com" }]
     const handleEditClick = () => {
-        setUpdatedUser(user); // Reset to original data
+        setUpdatedUser(user); 
         setShowModal(true);
     };
                 

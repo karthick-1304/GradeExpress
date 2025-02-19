@@ -11,7 +11,7 @@ const InchargeHomePage = ({user,setUser}) => {
     <div className='outer-container-incharge'>
         <nav className="navbar navbar-expand-lg shadow py-3">
             <div className="container">
-            <h1 style={{ color: "orangered", fontSize: "23px" }}>WELCOME {student.name.toUpperCase()} !</h1>
+            <h1 style={{ color: "##F7DBA7", fontSize: "23px" }}>WELCOME {student.name.toUpperCase()} !</h1>
             <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul className="navbar-nav gap-4">
                 <Link to="/" className="text-decoration-none"><li className="nav-item">Home</li></Link>
@@ -62,7 +62,7 @@ const InchargeHomePage = ({user,setUser}) => {
             <div>
                 <h1 className='student-head'>Tutor Ward</h1>
                 <div>
-                <table className="course-table">
+                <table className="tutorward-table">
                     <thead>
                         <tr>
                             <th>RegNo</th>

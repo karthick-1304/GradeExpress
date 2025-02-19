@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import "./AddCourse.css";
 import axios from 'axios';
 import { Table, Button, Modal, Form } from 'react-bootstrap';
-
+import Header from "../Common_pages/Header"
 const AddCourse = () => {
     const [courses, setCourses] = useState([]);
+    const [displayCourses, setDisplayCourses] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [searchName,setSearchName]=useState();
     const [formData, setFormData] = useState({
         domain: "",
         name: "",
@@ -25,6 +27,7 @@ const AddCourse = () => {
         try {
             const response = await axios.get('http://localhost:5000/getCourses');
             setCourses(response.data);
+            setDisplayCourses(response.data);
             console.log(response.data);
         } catch (error) {
             console.error("Error fetching courses:", error);
@@ -100,13 +103,32 @@ const AddCourse = () => {
         setShowModal(false);
         setSelectedCourse(null);
     };
+     
+    function search(e) {
+        const value = e.target.value;
+        setSearchName(value);
+    
+        // Use updated state inside useEffect if needed
+        console.log("Search Query:", value);
+    
+        if (value) {
+            setDisplayCourses(courses.filter(course => course.name.toLowerCase().includes(value.toLowerCase())));
+            console.log("Filtered Courses:", courses);
+        }
+        else    
+            setDisplayCourses(courses);
+    }
 
     return (
-        <div className='outer-container'>
+        <div className='outer-container-incharge'>
+            <Header/>
             <div className="admin-page">
-                <h1>Course Management</h1>
+                <h1 className='course-h2'>Course Management</h1>
+                <div className='course-search-container'>
                 <Button onClick={handleAddCourse}>Add Course</Button>
-                <Table striped bordered hover>
+                <input type="text"  placeholder="Search by Course Name: " className='course-search' onChange={search} />
+                </div>
+                <Table  className='course-table'striped bordered hover>
                     <thead>
                         <tr>
                             <th>Course Code</th>
@@ -117,7 +139,7 @@ const AddCourse = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {courses.map((course) => (
+                        {displayCourses.map((course) => (
                             <tr key={course.code}>
                                 <td>{course.code}</td>
                                 <td>{course.name}</td>
@@ -133,7 +155,7 @@ const AddCourse = () => {
                 </Table>
             </div>
 
-            <Modal show={showModal} onHide={handleCloseModal}>
+            <Modal className='addcourse-model-form' show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>{editMode ? "Edit Course" : "Add Course"}</Modal.Title>
                 </Modal.Header>

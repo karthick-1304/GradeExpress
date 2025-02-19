@@ -2,7 +2,6 @@
 .admin-page {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 20px;
-    background: linear-gradient(to bottom right, #1e3c72, #2a5298);
     min-height: 100vh;
     color: #fff;
   }
@@ -20,7 +19,6 @@
   .admin-h2 {
     color: #F7DBA7;
     text-align: center;
-    margin-top: 30px;
     font-size: 2rem;
     font-weight: 700;
   }
@@ -96,7 +94,7 @@
   .admin-table th {
     background-color: #E6E1C5;
     color: #000;
-    font-weight: bold;
+    font-weight: bolder ;
     text-transform: uppercase;
   }
   
