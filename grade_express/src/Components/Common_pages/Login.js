@@ -77,12 +77,13 @@ const Login = ({user,setUser}) => {
   }, []);
   function openForgerPassWord(){
     if(!regno||!role){
-      toast.error("Enter Register Number", {
+      toast.error("Fill Register Number and role", {
         position: "top-center",
         duration: 5000,
         toastClassName: "toast",
      });
     }
+    
     else{
       axios.post("http://localhost:5000/forgot-password", { regno,role })
       .then((response) => {

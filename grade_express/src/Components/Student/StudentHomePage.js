@@ -28,7 +28,7 @@ const StudentHomePage = ({user,setUser}) => {
         e.preventDefault();
         setUser(updatedUser);
         setShowModal(false);
-        axios.put("http://localhost:5000/editProfile", updatedUser)
+        axios.put("http://localhost:5000/editProfileStudent", updatedUser)
   .then((response) => {
     toast.success("Profile updated successfully!", {
       position: "top-center",
@@ -119,7 +119,7 @@ const StudentHomePage = ({user,setUser}) => {
                 required
               />
 
-              <label>Department:</label>
+             {/*  <label>Department:</label>
               <input
                 type="text"
                 name="dept"
@@ -127,7 +127,7 @@ const StudentHomePage = ({user,setUser}) => {
                 onChange={handleChange}
                 required
               />
-
+ */}
               <div className="modal-buttons">
                 <button type="submit" className="save-btn">
                   Save

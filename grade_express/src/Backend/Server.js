@@ -256,16 +256,30 @@ app.post("/forgot-password", async (req, res) => {
 });
 
 
-app.put('/editProfile', async (req, res) => {
-  const { regno, password, phone_no } = req.body;
+app.put('/editProfileStudent', async (req, res) => {
+  const { regno, password, phone_no,role } = req.body;
   try {
     await pool.query(
-      'UPDATE students_info SET password = $1, phone_no = $2 WHERE regno = $3',
+      `UPDATE students_info SET password = $1, phone_no = $2 WHERE regno = $3`,
       [password, phone_no, regno]
     );
-
     res.send('Profile updated successfully');
   } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+});
+
+app.put('/editProfileStaff', async (req, res) => {
+  const { regno, password } = req.body;
+  try {
+    await pool.query(
+      `UPDATE staff_info SET password = $1 WHERE regno = $2`,
+      [password, regno]
+    );
+    res.send('Profile updated successfully');
+  } catch (err) {
+    console.log(err);
     res.status(500).send(err.message);
   }
 });
