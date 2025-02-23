@@ -7,7 +7,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Toaster, toast } from "react-hot-toast";
 
-const StudentHomePage = ({user,setUser}) => {
+const StudentHomePage = ({user,setUser,logout}) => {
     console.log("student homePage:",user);
     const [showModal, setShowModal] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(user);
@@ -56,9 +56,9 @@ const StudentHomePage = ({user,setUser}) => {
             <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul className="navbar-nav gap-4">
                 <Link to="/" className="text-decoration-none"><li className="nav-item">Home</li></Link>
-                <Link to="/aboutUs" className="text-decoration-none"><li className="nav-item">Enroll</li></Link>
+                <Link to="/enroll" className="text-decoration-none"><li className="nav-item">Enroll</li></Link>
                 <Link to="/contact" className="text-decoration-none"><li className="nav-item">Result</li></Link>
-                <Link to="/" className="text-decoration-none"><li className="nav-item">Logout</li></Link>
+                <Link to="/"  onClick={()=>logout()} className="text-decoration-none"><li className="nav-item">Logout</li></Link>
                 </ul>
             </div>
             </div>

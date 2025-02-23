@@ -14,8 +14,6 @@ const Header = ({ get }) => {
             <Link to="/features" className="text-decoration-none"><li className="nav-item">Features</li></Link>
             <Link to="/contact" className="text-decoration-none"><li className="nav-item">Contact</li></Link>
             <Link to="/login" className="text-decoration-none"><li className="nav-item">Login</li></Link>
-            {/* <input type="file" id="file" accept=".xls,.xlsx" />
-            <Button onClick={() => get()}>Signup</Button> */}
           </ul>
         </div>
       </div>  

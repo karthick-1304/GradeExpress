@@ -5,7 +5,7 @@ import 'font-awesome/css/font-awesome.min.css'; // Import Font Awesome
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from "react-hot-toast";
-import ROBO from "../../Asserts/robo.jpg"
+import ROBO from "../../Asserts/robo.png"
 
 
 const Login = ({user,setUser}) => {
@@ -36,7 +36,8 @@ const Login = ({user,setUser}) => {
           const response = await axios.post("http://localhost:5000/login", extractedData, {
             headers: { "Content-Type": "application/json" },
           });
-          console.log(response.data);
+          console.log(response.data.token);
+          localStorage.setItem("token",response.data.token);
           if(role=='Student')
               navigae("/studentHomePage");  
           else if(role=='Staff')

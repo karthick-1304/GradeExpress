@@ -1,0 +1,109 @@
+.enrollPage-container {
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Header */
+  .enrollPage-header {
+    text-align: center;
+    font-size: 2.5rem;
+    color: whitesmoke;
+    margin-bottom: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  }
+  .enrollPage-tableContainer{
+    margin: 5%;
+  }
+  
+  /* Table styling */
+  .enrollPage-tableContainer table {
+    text-align: center;
+    border: 10px solid black;
+    width: 100%;
+    margin-top:3%;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  .enrollPage-tableContainer table th  {
+    padding: 1rem;
+    font-size:large;
+    font-weight:bold;
+    background-color:rgb(63, 62, 62);
+    color: #ffffff;
+  }
+  .enrollPage-tableContainer table tr:hover{
+    background-color: rgba(0, 0, 0, 0.074);
+  }
+  
+  
+  
+
+  /* Form Controls */
+  .enrollPage-formControl {
+    border-radius: 4px;
+    border: 1px solid #bdc3c7;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .enrollPage-formControl:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 5px rgba(41,128,185,0.3);
+  }
+  
+  /* Buttons */
+  .enrollPage-button {
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    border: none;
+    outline: none;
+  }
+  
+  .enrollPage-btnPrimary {
+    background-color: #2980b9;
+    color: #fff;
+  }
+  
+  .enrollPage-btnPrimary:hover {
+    background-color: #1f6391;
+  }
+  
+  .enrollPage-btnSuccess {
+    background-color: #27ae60;
+    color: #fff;
+  }
+  
+  .enrollPage-btnSuccess:hover {
+    background-color: #1e8c4a;
+  }
+  
+  .enrollPage-btnSecondary {
+    background-color: #7f8c8d;
+    color: #fff;
+  }
+  
+  .enrollPage-btnSecondary:hover {
+    background-color: #636e70;
+  }
+  
+  /* Edit row action cell styling */
+  .enrollPage-actionCell {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .enroll-modal{
+    margin-top: 4%;
+    z-index: 999999999;
+  }

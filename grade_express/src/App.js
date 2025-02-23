@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from "./Components/Common_pages/Home";
-import {Routes,Route} from "react-router-dom"
-import { useState } from 'react';
+import {Routes,Route, useNavigate} from "react-router-dom"
+import { useState,useEffect } from 'react';
 import StudentHomePage from './Components/Student/StudentHomePage';
 import AboutUs from './Components/Common_pages/AboutUs';
 import Contact from './Components/Common_pages/Contact';
@@ -14,8 +14,11 @@ import { Toaster, toast } from "react-hot-toast";
 import InchargeHomePage from './Components/Incharge/InchargeHomePage';
 import AddCourse from './Components/Incharge/AddCourse';
 import AdminPage from './Components/Admin/AdminPage';
+import Enroll from './Components/Student/EnrollPage';
+import { Navigate } from 'react-router-dom';
 function App() {
    const [user,setUser]=useState({});
+   const navigae=useNavigate();
   async function get() {
     const fileInput = document.querySelector("#file");
     const file = fileInput.files[0];
@@ -79,6 +82,37 @@ function App() {
     reader.readAsBinaryString(file);
   }
 
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = localStorage.getItem("token");
+      console.log(token);
+      if (token) {
+        
+        try {
+          const response = await axios.post("http://localhost:5000/checkToken", { token });
+          setUser(response.data.user);
+          console.log(response.data.user.role);
+          if(response.data.user.role=='Admin')  
+            navigae("/adminHomePage");
+          else if(response.data.user.role=='Student'){
+            navigae("/studentHomePage");console.log(1);}  
+        else if(response.data.user.role=='Staff')
+          navigae("/staffHomePage");
+        } catch (error) {
+          console.error("Error verifying token:", error);
+        }
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  
+  function logout() {
+    localStorage.removeItem("token");
+    navigae("/");
+}
+
   
    return (
     <div className="App">
@@ -89,10 +123,11 @@ function App() {
         <Route path='/login' element={<Login user={user} setUser={setUser}/>}></Route>
         <Route path='/features' element={<Features/>}></Route>
         <Route path='/header' element={<Header/>}></Route>
-        <Route path='/studentHomePage' element={<StudentHomePage user={user} setUser={setUser}/>}></Route>
-        <Route path='/staffHomePage' element={<InchargeHomePage user={user} setUser={setUser}/>}></Route>
+        <Route path='/studentHomePage' element={<StudentHomePage user={user} setUser={setUser} logout={logout}/>}></Route>
+        <Route path='/staffHomePage' element={<InchargeHomePage user={user} setUser={setUser} logout={logout}/>}></Route>
         <Route path='/addCourse' element={<AddCourse />}></Route>
-        <Route path='/adminHomePage' element={<AdminPage get={get} />}></Route>
+        <Route path='/adminHomePage' element={<AdminPage get={get} logout={logout}/>}></Route>
+        <Route path='/enroll' element={<Enroll user={user} setUser={setUser}/>}></Route>
      </Routes>
      <Toaster/>
     </div>

@@ -5,7 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
-const InchargeHomePage = ({ user, setUser }) => {
+const InchargeHomePage = ({ user, setUser,logout }) => {
   const student = user;
   const [showModal, setShowModal] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(user);
@@ -99,7 +99,7 @@ const InchargeHomePage = ({ user, setUser }) => {
               <Link to="/aboutUs" className="text-decoration-none">
                 <li className="nav-item">Verify</li>
               </Link>
-              <Link to="/" className="text-decoration-none">
+              <Link to="/"  onClick={()=>logout()} className="text-decoration-none">
                 <li className="nav-item">Logout</li>
               </Link>
             </ul>

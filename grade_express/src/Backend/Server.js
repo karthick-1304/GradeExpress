@@ -17,7 +17,8 @@ app.use(bodyParser.json());
     password: '2004', // Replace with your PostgreSQL password
     database: 'gradeExpress', // Replace with your PostgreSQL database name
   });
-  
+
+ 
   app.post("/login", async (req, res) => {
     try {
       const { regno, password,role } = req.body;
@@ -40,7 +41,8 @@ app.use(bodyParser.json());
           dept: user.dept,
           tutor_name: user.tutor_name,
           phone_no: user.phone_no,
-          year_of_joining: user.year_of_joining
+          year_of_joining: user.year_of_joining,
+          role
         }
       }
       else{
@@ -52,14 +54,16 @@ app.use(bodyParser.json());
           dept: user.dept,
           designation:user.designation,
           phone_no: user.phone_no,
+          role
           // tutor_ward
         }
       }
-      // const token = jwt.sign({ regno: user.regno, name: user.name }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      
+      const token = jwt.sign( data, "123@2004", { expiresIn: "30m" });
   
       res.json({
         message: "Login successful",
-        // token: token,
+        token: token,
         user: data
       });
     } catch (error) {
@@ -67,6 +71,23 @@ app.use(bodyParser.json());
       res.status(500).json({ message: "Internal Server Error" });
     }
   });
+
+
+  app.post("/checkToken",async (req,res)=>{
+    const{token}=req.body;
+    if (token) {
+      try {
+          const decoded = jwt.verify(token,"123@2004");
+          console.log("Token is valid:", decoded);
+          res.json({
+            user:decoded
+          })
+    
+      } catch (error) {
+          console.error("Invalid or expired token:", error.message);
+      }
+        } 
+  })
   
 // API to insert extracted data row by row
 app.post("/upload", async (req, res) => {
@@ -283,6 +304,93 @@ app.put('/editProfileStaff', async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
+//enrolllment
+
+app.post('/fetchEnrollments', async (req, res) => {
+  const { register_number } = req.body;
+  try {
+    const result = await pool.query(
+      `SELECT 
+        c.code, 
+        c.name, 
+        c.isCredit, 
+        cr.enroll_proof 
+      FROM course_registration cr 
+      JOIN course_details c ON c.code = cr.course_code 
+      WHERE cr.student_regno = $1 
+      ORDER BY c.code ASC`,
+      [register_number]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error retrieving enrollments:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// POST /enrollments - Add a new enrollment
+app.post('/enrollments', async (req, res) => {
+  const {
+    register_number,
+    course_code,
+    enroll_proof,
+  } = req.body;
+  console.log("Fresh Enroll ");
+  try {
+    const insertQuery = `
+      INSERT INTO course_registration 
+      (student_regno, course_code,enroll_proof)
+      VALUES ($1, $2,$3)
+      RETURNING *
+    `;
+    const values = [
+      register_number,
+      course_code,enroll_proof
+    ];
+
+    const result = await pool.query(insertQuery, values);
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error inserting enrollment:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET /courses - Retrieve all courses
+app.get('/getCoursesToEnroll', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM course_details ORDER BY name ASC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error retrieving courses:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update an enrollment with edited fields
+app.put('/updateEnrollment', async (req, res) => {
+  const { enroll_proof, payment_proof, certificate, register_number } = req.body;
+  try {
+    const updateQuery = `
+      UPDATE course_registration 
+      SET enroll_proof = $1,
+          payment_proof = $2,
+          certificate = $3
+      WHERE student_regno = $4
+      RETURNING *
+    `;
+    const values = [enroll_proof, payment_proof, certificate, register_number];
+    const result = await pool.query(updateQuery, values);
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error updating enrollment:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+ 
+//enrollment
 
 
 const PORT = process.env.PORT || 5000;
