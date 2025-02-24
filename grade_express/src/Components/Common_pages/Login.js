@@ -28,7 +28,7 @@ const Login = ({user,setUser}) => {
       try {
         if(role=='Admin'){
           if(regno==='admin@nec'&&password=='123')
-              navigae("/adminHomePage");
+              navigae("/AdminHomePage");
           else  
           throw new Error("Invalid admin credentials");
         }
@@ -36,14 +36,10 @@ const Login = ({user,setUser}) => {
           const response = await axios.post("http://localhost:5000/login", extractedData, {
             headers: { "Content-Type": "application/json" },
           });
-          console.log(response.data.token);
           localStorage.setItem("token",response.data.token);
-          if(role=='Student')
-              navigae("/studentHomePage");  
-          else if(role=='Staff')
-            navigae("/staffHomePage");
-          
           setUser({ ...response.data.user, role:role });
+          // alert(user.role);
+           navigae(`/${role}HomePage`)
         }
         toast.success("Login successfully!", {
           position: "top-center",

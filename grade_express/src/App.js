@@ -92,12 +92,7 @@ function App() {
           const response = await axios.post("http://localhost:5000/checkToken", { token });
           setUser(response.data.user);
           console.log(response.data.user.role);
-          if(response.data.user.role=='Admin')  
-            navigae("/adminHomePage");
-          else if(response.data.user.role=='Student'){
-            navigae("/studentHomePage");console.log(1);}  
-        else if(response.data.user.role=='Staff')
-          navigae("/staffHomePage");
+            navigae(`/${response.data.user.role}HomePage`);
         } catch (error) {
           console.error("Error verifying token:", error);
         }
@@ -123,10 +118,10 @@ function App() {
         <Route path='/login' element={<Login user={user} setUser={setUser}/>}></Route>
         <Route path='/features' element={<Features/>}></Route>
         <Route path='/header' element={<Header/>}></Route>
-        <Route path='/studentHomePage' element={<StudentHomePage user={user} setUser={setUser} logout={logout}/>}></Route>
-        <Route path='/staffHomePage' element={<InchargeHomePage user={user} setUser={setUser} logout={logout}/>}></Route>
-        <Route path='/addCourse' element={<AddCourse />}></Route>
-        <Route path='/adminHomePage' element={<AdminPage get={get} logout={logout}/>}></Route>
+        <Route path='/StudentHomePage' element={<StudentHomePage user={user} setUser={setUser} logout={logout}/>}></Route>
+        <Route path='/StaffHomePage' element={<InchargeHomePage user={user} setUser={setUser} logout={logout}/>}></Route>
+        <Route path='/addCourse' element={<AddCourse user={user} setUser={setUser} logout={logout}/>}></Route>
+        <Route path='/AdminHomePage' element={<AdminPage get={get} logout={logout}/>}></Route>
         <Route path='/enroll' element={<Enroll user={user} setUser={setUser}/>}></Route>
      </Routes>
      <Toaster/>

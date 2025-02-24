@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import IMG from "./student_jump_img.jpg";
 import { useState } from "react";
 import axios from "axios";
@@ -6,10 +6,9 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
 const InchargeHomePage = ({ user, setUser,logout }) => {
-  const student = user;
+  console.log("Staff Home Page:",user);
   const [showModal, setShowModal] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(user);
-  console.log(user);
   const studentsList = [
     {
       regno: "2212074",
@@ -71,19 +70,20 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
       });
   };
 
+
   return (
     <div className="outer-container-incharge">
       <nav className="navbar navbar-expand-lg shadow py-3">
         <div className="container">
           <h1 style={{ color: "##F7DBA7", fontSize: "23px" }}>
-            WELCOME {student.name.toUpperCase()} !
+            WELCOME {user?.name?.toUpperCase()} !
           </h1>
           <div
             className="collapse navbar-collapse justify-content-end"
             id="navbarNav"
           >
             <ul className="navbar-nav gap-4">
-              <Link to="/" className="text-decoration-none">
+              <Link to={`/${user.role}HomePage`}className="text-decoration-none">
                 <li className="nav-item">Home</li>
               </Link>
               {user.designation === "Incharge" && (
@@ -111,29 +111,29 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
         <div className="profile-total">
           <div className="profile-left">
             <img src={IMG} alt="" />
-            <h1>{student.role}</h1>
+            <h1>{user.role}</h1>
           </div>
 
           <table className="profile-table">
             <tr>
               <th>Name</th>
-              <td>{student.name}</td>
+              <td>{user.name}</td>
             </tr>
             <tr>
               <th>Regno</th>
-              <td>{student.regno}</td>
+              <td>{user.regno}</td>
             </tr>
             <tr>
               <th>Designation</th>
-              <td>{student.designation}</td>
+              <td>{user.designation}</td>
             </tr>
             <tr>
               <th>Email</th>
-              <td>{student.email}</td>
+              <td>{user.email}</td>
             </tr>
             <tr>
               <th>Department</th>
-              <td>{student.dept}</td>
+              <td>{user.dept}</td>
             </tr>
           </table>
           <div>

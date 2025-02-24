@@ -3,7 +3,7 @@ import { Button, Table, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import "./EnrollPage.css";
-
+import { Toaster, toast } from "react-hot-toast";
 const Enroll = ({ user }) => {
   console.log(user);
   const [courses, setCourses] = useState([]);
@@ -69,7 +69,19 @@ const Enroll = ({ user }) => {
     try {
       await axios.post('http://localhost:5000/enrollments', newEnrollment);
       console.log(newEnrollment);
-      fetchEnrollments();
+      toast.success("Enrolled successfully!", {
+        position: "top-center",
+        duration: 5000,
+      });
+      
+    } catch (error) {
+      console.error('Error enrolling:', error);
+      toast.error("Alreadt Enrolled!", {
+        position: "top-center",
+        duration: 5000,
+      });
+    }
+    fetchEnrollments();
       setShowEnrollModal(false);
       setSelectedCourse('');
       setNewEnrollment({
@@ -78,9 +90,6 @@ const Enroll = ({ user }) => {
         course_name: '',
         enroll_proof: '',
       });
-    } catch (error) {
-      console.error('Error enrolling:', error);
-    }
   };
 
   // Open modal for adding additional details
@@ -122,7 +131,7 @@ const Enroll = ({ user }) => {
             <h1 style={{ color: "##F7DBA7", fontSize: "23px" }}>WELCOME {user.name}!</h1>
             <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul className="navbar-nav gap-4">
-                <Link to="/" className="text-decoration-none"><li className="nav-item">Home</li></Link>
+                <Link to={`/${user.role}HomePage`} className="text-decoration-none"><li className="nav-item">Home</li></Link>
                 <Link to="/enroll" className="text-decoration-none"><li className="nav-item">Enroll</li></Link>
                 <Link to="/contact" className="text-decoration-none"><li className="nav-item">Result</li></Link>
                 <Link to="/" className="text-decoration-none"><li className="nav-item">Logout</li></Link>
@@ -159,6 +168,9 @@ const Enroll = ({ user }) => {
                 <td>
                   <Button variant="info" onClick={() => handleAddDetails(enrollment)}>
                     Add Details
+                  </Button>
+                  <Button variant="danger" onClick={() => handleAddDetails(enrollment)}>
+                    Delete
                   </Button>
                 </td>
               </tr>
