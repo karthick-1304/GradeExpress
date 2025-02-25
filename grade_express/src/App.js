@@ -1,20 +1,20 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Home from "./Components/Common_pages/Home";
+import Home from "./Components/Common_pages/Home.js";
 import {Routes,Route, useNavigate} from "react-router-dom"
 import { useState,useEffect } from 'react';
-import StudentHomePage from './Components/Student/StudentHomePage';
-import AboutUs from './Components/Common_pages/AboutUs';
-import Contact from './Components/Common_pages/Contact';
-import Features from './Components/Common_pages/Features';
+import StudentHomePage from './Components/Student/StudentHomePage.js';
+import AboutUs from './Components/Common_pages/AboutUs.js';
+import Contact from './Components/Common_pages/Contact.js';
+import Features from './Components/Common_pages/Features.js';
 import axios from 'axios';
 import * as XLSX from "xlsx";
-import Login from './Components/Common_pages/Login';
-import Header from './Components/Common_pages/Header';
+import Login from './Components/Common_pages/Login.js';
+import Header from './Components/Common_pages/Header.js';
 import { Toaster, toast } from "react-hot-toast";
-import InchargeHomePage from './Components/Incharge/InchargeHomePage';
-import AddCourse from './Components/Incharge/AddCourse';
-import AdminPage from './Components/Admin/AdminPage';
-import Enroll from './Components/Student/EnrollPage';
+import InchargeHomePage from './Components/Incharge/InchargeHomePage.js';
+import AddCourse from './Components/Incharge/AddCourse.js';
+import AdminPage from './Components/Admin/AdminPage.js';
+import Enroll from './Components/Student/EnrollPage.js';
 import { Navigate } from 'react-router-dom';
 function App() {
    const [user,setUser]=useState({});
@@ -66,8 +66,6 @@ function App() {
       }));
   
       console.log("Extracted Data:", extractedData);
-      return;
-      // Send data to backend using Axios
       try {
         const response = await axios.post("http://localhost:5000/upload", extractedData, {
           headers: { "Content-Type": "application/json" },

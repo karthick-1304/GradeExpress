@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Carousel, Container, Row, Col } from 'react-bootstrap';
 import './Home.css';
 import IMG from "./student_jump_img.jpg";
-import Header from './Header';
+import Header from './Header.js';
 
 const Home = () => {
   const features = [

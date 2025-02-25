@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from './Header'
+import Header from './Header.js'
 const Contact = () => {
   return (
     <div className='outer-container'>
