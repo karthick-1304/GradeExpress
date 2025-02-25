@@ -123,6 +123,15 @@ const Enroll = ({ user }) => {
       console.error('Error updating details:', error);
     }
   };
+  async function deleteEnrollment(code){
+    console.log(code,user.regno);
+    try {
+      await axios.post('http://localhost:5000/deleteEnrollment', {regno:user.regno,code});
+      fetchEnrollments();
+    } catch (error) {
+      console.error('Error updating details:', error);
+    }
+  }
 
   return (
     <div className="student-outer-container">
@@ -169,7 +178,7 @@ const Enroll = ({ user }) => {
                   <Button variant="info" onClick={() => handleAddDetails(enrollment)}>
                     Add Details
                   </Button>
-                  <Button variant="danger" onClick={() => handleAddDetails(enrollment)}>
+                  <Button variant="danger" onClick={() =>deleteEnrollment(enrollment.code)}>
                     Delete
                   </Button>
                 </td>

@@ -23,8 +23,8 @@ app.use(bodyParser.json());
     try {
       const { regno, password,role } = req.body;
       const db=(role==='Student')?"students_info":"staff_info";
-      const query = `SELECT * FROM ${db} WHERE regno = $1`; // Use string interpolation
-      const result = await pool.query(query, [regno]); // Use $1 only for values
+      const query = `SELECT * FROM ${db} WHERE regno = $1`; 
+      const result = await pool.query(query, [regno]); 
       if (result.rows.length === 0) 
         return res.status(401).json({ message: "Invalid registration number or password" });
       const user = result.rows[0];
@@ -59,11 +59,11 @@ app.use(bodyParser.json());
         }
       }
       
-      const token = jwt.sign( data, "123@2004", { expiresIn: "30m" });
+      const token = jwt.sign( {regno:user.regno,role}, "123@2004", { expiresIn: "30m" });
   
       res.json({
         message: "Login successful",
-        token: token,
+       token,
         user: data
       });
     } catch (error) {
@@ -72,22 +72,61 @@ app.use(bodyParser.json());
     }
   });
 
-
-  app.post("/checkToken",async (req,res)=>{
-    const{token}=req.body;
-    if (token) {
-      try {
-          const decoded = jwt.verify(token,"123@2004");
-          console.log("Token is valid:", decoded);
-          res.json({
-            user:decoded
-          })
+  const authMiddleware = (req, res, next) => {
+    const {token}=req.body;
+    if (!token) 
+      return res.status(401).json({ message: "Access denied. No token provided." });
     
-      } catch (error) {
-          console.error("Invalid or expired token:", error.message);
+    try {
+      const decoded = jwt.verify(token, "123@2004"); 
+      req.body.regno = decoded.regno; 
+      req.body.role=decoded.role;
+      next(); 
+    } catch (error) {
+      console.error(error);
+      return res.status(401).json({ message: "Invalid or expired token." });
+    }
+  };
+  app.post("/checkToken",authMiddleware,async (req,res)=>{
+    const{regno,role}=req.body;
+    const db=(role==='Student')?"students_info":"staff_info";
+    const query = `SELECT * FROM ${db} WHERE regno = $1`; 
+    const result = await pool.query(query, [regno]); 
+    const user = result.rows[0];
+    let data;
+    if(role=="Student"){
+      data={
+        regno: user.regno,
+        name: user.name,
+        password:user.password,
+        email: user.email,
+        dept: user.dept,
+        tutor_name: user.tutor_name,
+        phone_no: user.phone_no,
+        year_of_joining: user.year_of_joining,
+        role
       }
-        } 
+    }
+    else{
+      data={
+        regno: user.regno,
+        name: user.name,
+        password:user.password,
+        email: user.email,
+        dept: user.dept,
+        designation:user.designation,
+        phone_no: user.phone_no,
+        role
+        // tutor_ward
+      }
+    }
+    res.json({
+      user:data
+    })
+    
   })
+
+
   
 // API to insert extracted data row by row
 app.post("/upload", async (req, res) => {
@@ -100,7 +139,6 @@ app.post("/upload", async (req, res) => {
     const client = await pool.connect();
 
     for (let student of students) {
-        console.log(student);
       await client.query(
         "INSERT INTO students_info (regno, name,password, email, dept,tutor_name,phone_no,year_of_joining) VALUES ($1, $2, $3, $4,$5,$6,$7,$8)",
         [student.RegNo, student.Name, student.Password,student.Email, student.Department,student.Tutor_name,student.Phone_no,student.year_of_joining]
@@ -337,7 +375,6 @@ app.post('/enrollments', async (req, res) => {
     course_code,
     enroll_proof,
   } = req.body;
-  console.log("Fresh Enroll ");
   try {
     const insertQuery = `
       INSERT INTO course_registration 
@@ -357,6 +394,23 @@ app.post('/enrollments', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+app.post("/deleteEnrollment",async(req,res)=>{
+  const {regno,code}=req.body;
+  try {
+    const query = `
+      delete from course_registration 
+      where student_regno= $1 and course_code=$2`;
+    const values = [regno,code];
+   await pool.query(query, values);
+    res.send("Enrolled Course Deleted");
+    console.log("Enrolled Course Deleted");
+  } catch (err) {
+    console.error('Error deleting enrollment:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
+})
 
 // GET /courses - Retrieve all courses
 app.get('/getCoursesToEnroll', async (req, res) => {

@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
 const InchargeHomePage = ({ user, setUser,logout }) => {
-  console.log("Staff Home Page:",user);
+  // console.log("Staff Home Page:",user);
   const [showModal, setShowModal] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(user);
   const studentsList = [
@@ -50,6 +50,7 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setUser(updatedUser);
+    console.log(updatedUser);
     setShowModal(false);
     axios
       .put("http://localhost:5000/editProfileStaff", updatedUser)
