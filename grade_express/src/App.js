@@ -16,6 +16,7 @@ import AddCourse from './Components/Incharge/AddCourse.js';
 import AdminPage from './Components/Admin/AdminPage.js';
 import Enroll from './Components/Student/EnrollPage.js';
 import { Navigate } from 'react-router-dom';
+import Verify from './Components/Incharge/Verify.js';
 function App() {
    const [user,setUser]=useState({});
    const navigae=useNavigate();
@@ -85,16 +86,17 @@ function App() {
       const token = localStorage.getItem("token");
       console.log(token);
       if (token) {
-        
         try {
           const response = await axios.post("http://localhost:5000/checkToken", { token });
           setUser(response.data.user);
           console.log(response.data.user.role);
             navigae(`/${response.data.user.role}HomePage`);
         } catch (error) {
+          navigae("/login");
           console.error("Error verifying token:", error);
         }
       }
+      
     };
 
     checkToken();
@@ -121,6 +123,7 @@ function App() {
         <Route path='/addCourse' element={<AddCourse user={user} setUser={setUser} logout={logout}/>}></Route>
         <Route path='/AdminHomePage' element={<AdminPage get={get} logout={logout}/>}></Route>
         <Route path='/enroll' element={<Enroll user={user} setUser={setUser}/>}></Route>
+        <Route path='/verifyCertificate' element={<Verify user={user} setUser={setUser}logout={logout}/>}></Route>
      </Routes>
      <Toaster/>
     </div>

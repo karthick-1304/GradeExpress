@@ -97,7 +97,7 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
                   </Link>
                 </>
               )}
-              <Link to="/aboutUs" className="text-decoration-none">
+              <Link to="/verifyCertificate" className="text-decoration-none">
                 <li className="nav-item">Verify</li>
               </Link>
               <Link to="/"  onClick={()=>logout()} className="text-decoration-none">

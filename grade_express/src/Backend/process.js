@@ -1,3 +1,4 @@
+const { extract } = require("./certificateExtract");
 const {pool} =require("./dbConnection");
 const fetchEnrollments=async (req, res) => {
     const { register_number } = req.body;
@@ -64,19 +65,45 @@ const fetchEnrollments=async (req, res) => {
   };
 
   const updateEnrollment=async (req, res) => {
-    const { enroll_proof, payment_proof, certificate, register_number } = req.body;
+    console.log("Update Enrollment Reached");
+    const { payment_proof,
+      exam_venue,
+      exam_date,
+      exam_time,
+      certificate,
+       consolidated_score,
+      assessment_score,
+      proctored_score,
+      certificate_link,
+      register_number,
+      course_code,section} = req.body;
     try {
-      const updateQuery = `
-        UPDATE course_registration 
-        SET enroll_proof = $1,
-            payment_proof = $2,
-            certificate = $3
-        WHERE student_regno = $4
-        RETURNING *
-      `;
-      const values = [enroll_proof, payment_proof, certificate, register_number];
-      const result = await pool.query(updateQuery, values);
-      res.json(result.rows[0]);
+      if(section=='hallticket'){
+        console.log(exam_date,exam_time);
+        const result = await pool.query(
+          `UPDATE course_registration 
+           SET exam_venue=$1,exam_date=$2,exam_time=$3
+           WHERE course_code = $4 and student_regno=$5`,
+          [exam_venue,exam_date,exam_time,course_code,register_number]
+      );
+      res.json("Exam Details Updated");
+      }
+      else if(section=='payment'){
+        const result = await pool.query(
+          `UPDATE course_registration 
+           SET payment_proof=$1
+           WHERE course_code = $2 and student_regno=$3`,
+          [payment_proof,course_code,register_number]
+      );
+      res.json("Payment Details Updated");
+      }
+      else{
+        console.log(certificate);
+        extract(req, res);
+        console.log(1);
+      }
+     
+      
     } catch (err) {
       console.error('Error updating enrollment:', err);
       res.status(500).json({ error: 'Internal server error' });

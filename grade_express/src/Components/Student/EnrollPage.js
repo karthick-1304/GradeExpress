@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { Button, Table, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -8,6 +8,7 @@ const Enroll = ({ user }) => {
   console.log(user);
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
+  const[activeSection,setActiveSection]=useState("payment");
   const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState('');
@@ -23,7 +24,12 @@ const Enroll = ({ user }) => {
     payment_proof: '',
     exam_venue: '',
     exam_date: '',
-    certificate: '',
+    exam_time:'',
+    certificate:'',
+    consolidated_score:0,
+    assessment_score:0,
+    proctored_score:0,
+    certificate_link: '',
   });
 
   // Fetch available courses
@@ -96,10 +102,15 @@ const Enroll = ({ user }) => {
   const handleAddDetails = (enrollment) => {
     setEditingEnrollment(enrollment);
     setEditData({
-      payment_proof: enrollment.payment_proof || '',
-      exam_venue: enrollment.exam_venue || '',
-      exam_date: enrollment.exam_date || '',
-      certificate: enrollment.certificate || '',
+      payment_proof: '',
+      exam_venue: '',
+      exam_date: '',
+      exam_time:'',
+      certificate:'',
+      consolidated_score:0,
+      assessment_score:0,
+      proctored_score:0,
+      certificate_link: '',
     });
     setShowDetailsModal(true);
   };
@@ -111,11 +122,13 @@ const Enroll = ({ user }) => {
 
   // Save additional details to the server
   const handleSaveDetails = async () => {
+     console.log(editData);
     try {
-      await axios.put('http://localhost:5000/updateEnrollment', {
+      await axios.put( `http://localhost:5000/updateEnrollment`, {
         ...editData,
-        register_number: editingEnrollment.register_number,
-        course_code: editingEnrollment.course_code,
+        section:activeSection,
+        register_number: user?.regno,
+        course_code: editingEnrollment.code,
       });
       fetchEnrollments();
       setShowDetailsModal(false);
@@ -129,10 +142,23 @@ const Enroll = ({ user }) => {
       await axios.post('http://localhost:5000/deleteEnrollment', {regno:user.regno,code});
       fetchEnrollments();
     } catch (error) {
-      console.error('Error updating details:', error);
+      console.error('Error deleting details:', error);
     }
   }
 
+  const handleFileEditChange = (file) => {
+    if (file) {
+      console.log(22);
+      const formData = new FormData();
+      formData.append("certificate", file);
+      setEditData({...editData,certificate:formData});
+  
+      // Store formData or send it to backend
+      console.log("File selected:", file);
+    }
+    else  console.log("no")
+  };
+  
   return (
     <div className="student-outer-container">
          <nav className="navbar navbar-expand-lg shadow py-3">
@@ -150,9 +176,6 @@ const Enroll = ({ user }) => {
         </nav>
       <h1 className="enrollPage-header">Course Enrollment</h1>
       
-      {/* Button to open enrollment modal */}
-      
-
       <div className="enrollPage-tableContainer">
         <Button variant="primary" onClick={() => setShowEnrollModal(true)}>
           Enroll in a Course
@@ -189,7 +212,7 @@ const Enroll = ({ user }) => {
       </div>
 
       {/* Modal for Step 1: Selecting Course & Enroll Proof */}
-      <Modal show={showEnrollModal}   className='enroll-modal' onHide={() => setShowEnrollModal(false)}>
+      <Modal show={showEnrollModal}   className='enroll-modal ' onHide={() => setShowEnrollModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Enroll in a Course</Modal.Title>
         </Modal.Header>
@@ -224,37 +247,85 @@ const Enroll = ({ user }) => {
 
       {/* Modal for Step 2: Adding Additional Details */}
       <Modal show={showDetailsModal} className='enroll-modal'  onHide={() => setShowDetailsModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add Additional Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
+      <Modal.Header closeButton >
+        <div className="form-header">
+          <Button  onClick={() => setActiveSection("payment")}>Payment Proof</Button>
+          <Button onClick={() => setActiveSection("hallticket")}>Exam Details</Button>
+          <Button onClick={() => setActiveSection("certificate")}>Certificate Proof</Button>
+        </div>
+      </Modal.Header>
+
+      <Modal.Body>
+        <Form>
+          {/* Payment Proof Section */}
+          {activeSection === "payment" && (
             <Form.Group>
               <Form.Label>Payment Proof</Form.Label>
               <Form.Control type="text" name="payment_proof" value={editData.payment_proof} onChange={handleEditChange} />
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Exam Venue</Form.Label>
-              <Form.Control type="text" name="exam_venue" value={editData.exam_venue} onChange={handleEditChange} />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Exam Date</Form.Label>
-              <Form.Control type="date" name="exam_date" value={editData.exam_date} onChange={handleEditChange} />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Certificate</Form.Label>
-              <Form.Control type="text" name="certificate" value={editData.certificate} onChange={handleEditChange} />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDetailsModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleSaveDetails}>
-            Save Details
-          </Button>
-        </Modal.Footer>
+          )}
+
+          {/* Hallticket Proof Section */}
+          {activeSection === "hallticket" && (
+              <>
+                <Form.Group>
+                  <Form.Label>Exam Venue</Form.Label>
+                  <Form.Control type="text" name="exam_venue" value={editData.exam_venue} onChange={handleEditChange} />
+                </Form.Group>
+
+                <Form.Group> {/* Missing closing tag fixed */}
+                  <Form.Label>Exam Date</Form.Label>
+                  <Form.Control type="date" name="exam_date" value={editData.exam_date} onChange={handleEditChange} />
+                </Form.Group> 
+                <Form.Group>
+                  <Form.Label>Exam Time</Form.Label>
+                  <Form.Control type="text" name="exam_time" value={editData.exam_time} onChange={handleEditChange} />
+                </Form.Group>
+
+                
+              </>
+            )}
+
+
+          {/* Certificate Proof Section */}
+          {activeSection === "certificate" && (
+            <>
+              <Form.Group>
+                <Form.Label>Certificate Link</Form.Label>
+                <Form.Control type="text" name="certificate_link" value={editData.certificate_link} onChange={handleEditChange} />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Upload Certificate</Form.Label>
+                <Form.Control type="file" name="certificate"  onChange={(e) => handleFileEditChange(e.target.files[0])} />
+              </Form.Group>
+              
+              <Form.Group>
+                <Form.Label>Consolidated Score</Form.Label>
+                <Form.Control type="text" name="consolidated_score" value={editData.consolidated_score} onChange={handleEditChange} />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Proctored Score</Form.Label>
+                <Form.Control type="text" name="proctored_score" value={editData.proctored_score} onChange={handleEditChange} />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Online Assessment Score</Form.Label>
+                <Form.Control type="text" name="assessment_score" value={editData.assessment_score} onChange={handleEditChange} />
+              </Form.Group>
+              
+            </>
+          )}
+        </Form>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => setShowDetailsModal(false)}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={handleSaveDetails}>
+          Save Details
+        </Button>
+      </Modal.Footer>
+
       </Modal>
     </div>
   );

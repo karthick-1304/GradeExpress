@@ -8,7 +8,6 @@ const pool= new Pool({
 });
 
 const jwt = require("jsonwebtoken");
-
 const login=async (req, res) => {
     try {
       const { regno, password,role } = req.body;
@@ -66,7 +65,6 @@ const authMiddleware = (req, res, next) => {
     const {token}=req.body;
     if (!token) 
       return res.status(401).json({ message: "Access denied. No token provided." });
-    
     try {
       const decoded = jwt.verify(token, "123@2004"); 
       req.body.regno = decoded.regno; 
