@@ -1,5 +1,6 @@
 const { extract } = require("./certificateExtract");
 const {pool} =require("./dbConnection");
+
 const fetchEnrollments=async (req, res) => {
     const { register_number } = req.body;
     try {
@@ -70,13 +71,13 @@ const fetchEnrollments=async (req, res) => {
       exam_venue,
       exam_date,
       exam_time,
-      certificate,
        consolidated_score,
       assessment_score,
       proctored_score,
       certificate_link,
       register_number,
       course_code,section} = req.body;
+      const certificate=req.file?req.file.buffer:null;
     try {
       if(section=='hallticket'){
         console.log(exam_date,exam_time);
@@ -85,8 +86,8 @@ const fetchEnrollments=async (req, res) => {
            SET exam_venue=$1,exam_date=$2,exam_time=$3
            WHERE course_code = $4 and student_regno=$5`,
           [exam_venue,exam_date,exam_time,course_code,register_number]
-      );
-      res.json("Exam Details Updated");
+        );
+        res.json("Exam Details Updated");
       }
       else if(section=='payment'){
         const result = await pool.query(
@@ -99,8 +100,7 @@ const fetchEnrollments=async (req, res) => {
       }
       else{
         console.log(certificate);
-        extract(req, res);
-        console.log(1);
+        // extract(req, res);
       }
      
       

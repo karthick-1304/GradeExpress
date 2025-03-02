@@ -1,6 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
+const multer = require("multer");
+const path = require('path');
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const app = express();
@@ -11,7 +14,20 @@ const {getCourses,addCourse,editCourse, deleteCourse}=require("./course.js");
 const { deleteStudent, getStudents, editStudent } = require("./student.js");
 const { fetchEnrollments, enrollCourse, deleteEnrollment, updateEnrollment } = require("./process.js");
 const { forgetPassword } = require("./email.js");
-// const { extract } = require("./certificateExtract.js");
+app.use(cors()); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// const storage = multer.memoryStorage(); 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, 'uploads/'); 
+  },
+  filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); 
+  }
+});
+const upload = multer({ storage: storage , limits: { fileSize: 10 * 1024 * 1024 }, });
   app.use(cors());
   app.use(bodyParser.json());
   app.post("/login",login);
@@ -33,9 +49,8 @@ const { forgetPassword } = require("./email.js");
   app.post('/enrollments', enrollCourse);
   app.post("/deleteEnrollment",deleteEnrollment);
   app.get('/getCoursesToEnroll', getCourses);
-  app.put('/updateEnrollment', updateEnrollment);
+  app.post('/updateEnrollment', upload.single("certificate"), updateEnrollment);
   app.post("/forgot-password",forgetPassword);
-//  app.post("/certificateUpload",extract);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

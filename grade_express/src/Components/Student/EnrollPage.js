@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect, use, act } from 'react';
 import { Button, Table, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -25,7 +25,7 @@ const Enroll = ({ user }) => {
     exam_venue: '',
     exam_date: '',
     exam_time:'',
-    certificate:'',
+    certificate:{},
     consolidated_score:0,
     assessment_score:0,
     proctored_score:0,
@@ -106,7 +106,7 @@ const Enroll = ({ user }) => {
       exam_venue: '',
       exam_date: '',
       exam_time:'',
-      certificate:'',
+      certificate:{},
       consolidated_score:0,
       assessment_score:0,
       proctored_score:0,
@@ -122,13 +122,22 @@ const Enroll = ({ user }) => {
 
   // Save additional details to the server
   const handleSaveDetails = async () => {
-     console.log(editData);
+    const formData = new FormData();
+    formData.append("payment_proof", editData.payment_proof);
+    formData.append("exam_venue", editData.exam_venue);
+    formData.append("exam_date", editData.exam_date);
+    formData.append("exam_time", editData.exam_time);
+    formData.append("certificate_link", editData.certificate_link);
+    formData.append("consolidated_score", editData.consolidated_score.toString());
+    formData.append("assessment_score", editData.assessment_score.toString());
+    formData.append("proctored_score", editData.proctored_score.toString());
+    formData.append("certificate", editData.certificate);
+    formData.append("section",activeSection);
+    formData.append("register_number",user?.regno);
+    formData.append("course_code",editingEnrollment.code);
     try {
-      await axios.put( `http://localhost:5000/updateEnrollment`, {
-        ...editData,
-        section:activeSection,
-        register_number: user?.regno,
-        course_code: editingEnrollment.code,
+      await axios.post("http://localhost:5000/updateEnrollment", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       fetchEnrollments();
       setShowDetailsModal(false);
@@ -148,15 +157,12 @@ const Enroll = ({ user }) => {
 
   const handleFileEditChange = (file) => {
     if (file) {
-      console.log(22);
-      const formData = new FormData();
-      formData.append("certificate", file);
-      setEditData({...editData,certificate:formData});
-  
-      // Store formData or send it to backend
-      console.log("File selected:", file);
+      setEditData((prevData) => ({
+          ...prevData,
+          certificate: file,  
+      }));
     }
-    else  console.log("no")
+    else  console.log("No file Selected");
   };
   
   return (

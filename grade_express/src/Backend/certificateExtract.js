@@ -6,6 +6,7 @@ const { spawn } = require("child_process");
 const flaskPort = 5000; 
 const app=express();
 app.use(cors());
+
 const upload = multer({ dest: "uploads/" });
 const extract=async (req, res) => {
     try{
