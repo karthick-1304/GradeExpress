@@ -77,19 +77,21 @@ def extract_certificate_details(pdf_path):
 # Route to handle PDF uploads and processing
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    if 'file' not in request.files:
+    if 'certificate' not in request.files:
+        print("No file")
         return jsonify({'error': 'No file uploaded'}), 400
 
-    file = request.files['file']
+    file = request.files['certificate']
     if file.filename == '':
+        print("NO file")
         return jsonify({'error': 'No selected file'}), 400
 
     filename = secure_filename(file.filename)
     pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(pdf_path)
-
+    print(f"File saved at: {pdf_path}")
     details = extract_certificate_details(pdf_path)
     return jsonify(details)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000)

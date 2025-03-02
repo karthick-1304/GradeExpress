@@ -14,11 +14,11 @@ const {getCourses,addCourse,editCourse, deleteCourse}=require("./course.js");
 const { deleteStudent, getStudents, editStudent } = require("./student.js");
 const { fetchEnrollments, enrollCourse, deleteEnrollment, updateEnrollment } = require("./process.js");
 const { forgetPassword } = require("./email.js");
+const { addVerfication } = require("./verification.js");
 app.use(cors()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// const storage = multer.memoryStorage(); 
+//choice 1:
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
       cb(null, 'uploads/'); 
@@ -27,7 +27,12 @@ const storage = multer.diskStorage({
       cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); 
   }
 });
+
+// const storage = multer.memoryStorage();
 const upload = multer({ storage: storage , limits: { fileSize: 10 * 1024 * 1024 }, });
+
+//choice:2
+// const upload = multer({ dest: "uploads/" });
   app.use(cors());
   app.use(bodyParser.json());
   app.post("/login",login);
@@ -49,8 +54,10 @@ const upload = multer({ storage: storage , limits: { fileSize: 10 * 1024 * 1024 
   app.post('/enrollments', enrollCourse);
   app.post("/deleteEnrollment",deleteEnrollment);
   app.get('/getCoursesToEnroll', getCourses);
+ // app.post('/updateEnrollment', upload.single("certificate"), updateEnrollment);
   app.post('/updateEnrollment', upload.single("certificate"), updateEnrollment);
   app.post("/forgot-password",forgetPassword);
+  app.post("/addVerfication_details",addVerfication);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

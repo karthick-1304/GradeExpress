@@ -7,6 +7,7 @@ import { Toaster, toast } from "react-hot-toast";
 const Enroll = ({ user }) => {
   console.log(user);
   const [courses, setCourses] = useState([]);
+  const [result, setResult] = useState(null);
   const [enrollments, setEnrollments] = useState([]);
   const[activeSection,setActiveSection]=useState("payment");
   const [showEnrollModal, setShowEnrollModal] = useState(false);
@@ -136,9 +137,20 @@ const Enroll = ({ user }) => {
     formData.append("register_number",user?.regno);
     formData.append("course_code",editingEnrollment.code);
     try {
-      await axios.post("http://localhost:5000/updateEnrollment", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      if(activeSection=='certificate'){
+        const response=await axios.post(`http://localhost:8000/upload`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+        setResult(response.data);
+        verifyData(editData,result);
+        console.log("User entered:",editData);
+        console.log("extracted:",response.data);
+      }
+      else{
+        await axios.post("http://localhost:5000/updateEnrollment", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
       fetchEnrollments();
       setShowDetailsModal(false);
     } catch (error) {
@@ -154,6 +166,30 @@ const Enroll = ({ user }) => {
       console.error('Error deleting details:', error);
     }
   }
+
+  async function verifyData(editData,result){
+      if(editData.consolidated_score==result["Consolidated Score"]&&editData.proctored_score==result["Proctored Score"]&&editData.assessment_score==result["Online Assignment Score"]){
+          await axios.post("http://localhost:5000/addVerfication_details",{...result,regno:user.regno,course_code:editData.course_code})
+           .then((response) => {
+              toast.success("Certificate uploaded successfully!", {
+                position: "top-center",
+                duration: 5000,
+                toastClassName: "toast",
+              });
+            })
+            .catch((e) => {
+              console.error("Data mismatching:", e);
+              toast.error("Data Mismatch!", {
+                position: "top-center",
+                duration: 5000,
+                toastClassName: "toast",
+              });
+            });
+      }
+      else 
+        alert("Entered Data Mismatch")
+  }
+
 
   const handleFileEditChange = (file) => {
     if (file) {

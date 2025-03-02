@@ -31,7 +31,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "backend": "node ./src/Backend/Server.js"
+    "backend": "node ./src/Backend/Server.js",
+    "python":"py ./src/Backend/app.py"
+
   },
   "eslintConfig": {
     "extends": [

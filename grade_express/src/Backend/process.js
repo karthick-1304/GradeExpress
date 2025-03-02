@@ -77,7 +77,6 @@ const fetchEnrollments=async (req, res) => {
       certificate_link,
       register_number,
       course_code,section} = req.body;
-      const certificate=req.file?req.file.buffer:null;
     try {
       if(section=='hallticket'){
         console.log(exam_date,exam_time);
@@ -98,14 +97,9 @@ const fetchEnrollments=async (req, res) => {
       );
       res.json("Payment Details Updated");
       }
-      else{
-        console.log(certificate);
-        // extract(req, res);
-      }
-     
       
     } catch (err) {
-      console.error('Error updating enrollment:', err);
+      console.error('Error updating enrollment:');
       res.status(500).json({ error: 'Internal server error' });
     }
   };
