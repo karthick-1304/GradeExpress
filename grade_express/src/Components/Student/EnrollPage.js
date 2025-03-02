@@ -28,7 +28,7 @@ const Enroll = ({ user }) => {
     exam_time:'',
     certificate:{},
     consolidated_score:0,
-    assessment_score:0,
+    online_assignment_score:0,
     proctored_score:0,
     certificate_link: '',
   });
@@ -109,7 +109,7 @@ const Enroll = ({ user }) => {
       exam_time:'',
       certificate:{},
       consolidated_score:0,
-      assessment_score:0,
+      online_assignment_score:0,
       proctored_score:0,
       certificate_link: '',
     });
@@ -130,7 +130,7 @@ const Enroll = ({ user }) => {
     formData.append("exam_time", editData.exam_time);
     formData.append("certificate_link", editData.certificate_link);
     formData.append("consolidated_score", editData.consolidated_score.toString());
-    formData.append("assessment_score", editData.assessment_score.toString());
+    formData.append("assessment_score", editData.online_assignment_score.toString());
     formData.append("proctored_score", editData.proctored_score.toString());
     formData.append("certificate", editData.certificate);
     formData.append("section",activeSection);
@@ -138,6 +138,9 @@ const Enroll = ({ user }) => {
     formData.append("course_code",editingEnrollment.code);
     try {
       if(activeSection=='certificate'){
+        /* for (let pair of formData.entries()) {
+          console.log(pair[0] + ':', pair[1]);
+      } */
         const response=await axios.post(`http://localhost:8000/upload`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
@@ -149,9 +152,26 @@ const Enroll = ({ user }) => {
       else{
         await axios.post("http://localhost:5000/updateEnrollment", formData, {
           headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((response) => {
+          toast.success(`${activeSection} details updated successfully!`, {
+            position: "top-center",
+            duration: 5000,
+            toastClassName: "toast",
+          });
+        })
+        .catch((e) => {
+          console.error(`Error in ${activeSection} details updation!`, e);
+          toast.error(`Error in ${activeSection} details updation!`, {
+            position: "top-center",
+            duration: 5000,
+            toastClassName: "toast",
+          });
         });
       }
+
       fetchEnrollments();
+      return;
       setShowDetailsModal(false);
     } catch (error) {
       console.error('Error updating details:', error);
@@ -168,8 +188,9 @@ const Enroll = ({ user }) => {
   }
 
   async function verifyData(editData,result){
-      if(editData.consolidated_score==result["Consolidated Score"]&&editData.proctored_score==result["Proctored Score"]&&editData.assessment_score==result["Online Assignment Score"]){
-          await axios.post("http://localhost:5000/addVerfication_details",{...result,regno:user.regno,course_code:editData.course_code})
+      if(editData.consolidated_score==result["consolidated_score"]&&editData.proctored_score==result["proctored_score"]&&editData.online_assignment_score==result["online_assignment_score"]){
+        console.log(result);
+          await axios.post("http://localhost:5000/addVerfication_details",{...result,regno:user.regno,course_code:editingEnrollment.code})
            .then((response) => {
               toast.success("Certificate uploaded successfully!", {
                 position: "top-center",
@@ -178,8 +199,8 @@ const Enroll = ({ user }) => {
               });
             })
             .catch((e) => {
-              console.error("Data mismatching:", e);
-              toast.error("Data Mismatch!", {
+              console.error("Error in verification details:", e);
+              toast.error("Error in verification details", {
                 position: "top-center",
                 duration: 5000,
                 toastClassName: "toast",
@@ -350,8 +371,8 @@ const Enroll = ({ user }) => {
                 <Form.Control type="text" name="proctored_score" value={editData.proctored_score} onChange={handleEditChange} />
               </Form.Group>
               <Form.Group>
-                <Form.Label>Online Assessment Score</Form.Label>
-                <Form.Control type="text" name="assessment_score" value={editData.assessment_score} onChange={handleEditChange} />
+                <Form.Label>Online Assignment Score</Form.Label>
+                <Form.Control type="text" name="online_assignment_score" value={editData.online_assignment_score} onChange={handleEditChange} />
               </Form.Group>
               
             </>

@@ -50,22 +50,22 @@ def extract_image_from_area(pdf_path, rect, num):
 # Function to extract certificate details
 def extract_certificate_details(pdf_path):
     coords = {
-        "Name": (420, 450, 2100, 550),
-        "Course Name": (400, 630, 2150, 820),
-        "Consolidated Score": (1360, 800, 1610, 900),
-        "Online Assignment Score": (1082, 930, 1284, 1010),
-        "Proctored Score": (1720, 930, 1920, 1010),
-        "Time of Course": (1050, 1280, 1484, 1480),
-        "Roll No of Certificate": (205, 1680, 800, 1822),
-        "Profile Picture": (2164, 352, 2484, 732),
-        "Badge Type": (55, 412, 400, 782),
-        "QR of Certificate": (1284, 1680, 1422, 1822)
+        "ext_name": (420, 450, 2100, 550),
+        "ext_course_name": (400, 630, 2150, 820),
+        "consolidated_score": (1360, 800, 1610, 900),
+        "online_assignment_score": (1082, 930, 1284, 1010),
+        "proctored_score": (1720, 930, 1920, 1010),
+        "time_of_course": (1050, 1280, 1484, 1480),
+        "certificate_rollno": (205, 1680, 800, 1822),
+        "profile_picture": (2164, 352, 2484, 732),
+        "badge_type": (55, 412, 400, 782),
+        "qr_of_certificate": (1284, 1680, 1422, 1822)
     }
 
     details = {}
     num = 1
     for field, rect in coords.items():
-        if field in ["Profile Picture", "Badge Type", "QR of Certificate"]:
+        if field in ["profile_picture", "badge_type", "qr_of_certificate"]:
             details[field] = extract_image_from_area(pdf_path, rect, num)
             num += 1
         else:
