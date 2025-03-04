@@ -9,7 +9,11 @@ const fetchEnrollments=async (req, res) => {
           c.code, 
           c.name, 
           c.isCredit, 
-          cr.enroll_proof 
+          cr.enroll_proof ,
+          cr.payment_proof,
+          cr.exam_venue,
+          cr.exam_date,
+          cr.exam_time
         FROM course_registration cr 
         JOIN course_details c ON c.code = cr.course_code 
         WHERE cr.student_regno = $1 

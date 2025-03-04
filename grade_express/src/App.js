@@ -17,6 +17,7 @@ import AdminPage from './Components/Admin/AdminPage.js';
 import Enroll from './Components/Student/EnrollPage.js';
 import { Navigate } from 'react-router-dom';
 import Verify from './Components/Incharge/Verify.js';
+import DisplayCourse_info from './Components/Student/DisplayCourse_info.js';
 function App() {
    const [user,setUser]=useState({});
    const navigae=useNavigate();
@@ -124,6 +125,7 @@ function App() {
         <Route path='/AdminHomePage' element={<AdminPage get={get} logout={logout}/>}></Route>
         <Route path='/enroll' element={<Enroll user={user} setUser={setUser}/>}></Route>
         <Route path='/verifyCertificate' element={<Verify user={user} setUser={setUser}logout={logout}/>}></Route>
+        <Route path='/course-details' element={<DisplayCourse_info/>}></Route>
      </Routes>
      <Toaster/>
     </div>
