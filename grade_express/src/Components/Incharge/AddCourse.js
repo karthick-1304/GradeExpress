@@ -20,7 +20,6 @@ const AddCourse = ({user,logout}) => {
         end_date: "",
         instructor: "",
         success_rate: "",
-        prev_topper: "",
         assignment_drive_link: "",
     });
     const fetchCourses = async () => {
@@ -73,7 +72,6 @@ const AddCourse = ({user,logout}) => {
             end_date: "",
             instructor: "",
             success_rate: "",
-            prev_topper: "",
             assignment_drive_link: "",
         });
         setShowModal(true);
@@ -224,10 +222,6 @@ const AddCourse = ({user,logout}) => {
                         <Form.Group>
                             <Form.Label>Success Rate (%)</Form.Label>
                             <Form.Control type="number" name="success_rate" value={formData.success_rate} onChange={handleChange} required />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Previous Topper</Form.Label>
-                            <Form.Control type="text" name="prev_topper" value={formData.prev_topper} onChange={handleChange} />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Assignment Drive Link</Form.Label>

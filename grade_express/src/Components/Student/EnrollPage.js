@@ -131,20 +131,7 @@ const Enroll = ({ user }) => {
     formData.append("exam_venue", editData.exam_venue);
     formData.append("exam_date", editData.exam_date);
     formData.append("exam_time", editData.exam_time);
-    formData.append("certificate_link", editData.certificate_link);
-    formData.append(
-      "consolidated_score",
-      editData.consolidated_score.toString()
-    );
-    formData.append(
-      "assessment_score",
-      editData.online_assignment_score.toString()
-    );
-    formData.append("proctored_score", editData.proctored_score.toString());
     formData.append("certificate", editData.certificate);
-    formData.append("section", activeSection);
-    formData.append("register_number", user?.regno);
-    formData.append("course_code", editingEnrollment.code);
     try {
       if (activeSection == "certificate") {
         for (let pair of formData.entries()) {
@@ -157,6 +144,10 @@ const Enroll = ({ user }) => {
             headers: { "Content-Type": "multipart/form-data" },
           }
         );
+        response.data["badge_type"]="Silver";
+        response.data["topper"]="5%";
+        response.data["certificate_link"]=editData.certificate_link;
+        response.data["qr_of_certificate"]="https://www.skillrack.com/faces/index.xhtml";
         setResult(response.data);
         console.log("extracted:", response.data);
         await verifyData(response.data);
@@ -212,7 +203,7 @@ const Enroll = ({ user }) => {
       console.log(result);
       await axios
         .post("http://localhost:5000/addVerfication_details", {
-          ...extracted,
+          extracted,
           regno: user.regno,
           course_code: editingEnrollment.code,
         })
@@ -224,8 +215,8 @@ const Enroll = ({ user }) => {
           });
         })
         .catch((e) => {
-          console.error("Error in verification details:", e);
-          toast.error("Error in verification details", {
+          console.error("Duplicate Entry:", e);
+          toast.error("Duplicate Entry  ", {
             position: "top-center",
             duration: 5000,
             toastClassName: "toast",
