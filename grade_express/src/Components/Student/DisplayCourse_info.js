@@ -6,7 +6,8 @@ const DisplayCourseInfo = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { enrollment } = location.state || {};
-  enrollment.exam_date=enrollment.exam_date.split("T")[0];
+  console.log(enrollment.exam_date);
+  // enrollment.exam_date=enrollment.exam_date.split("T")[0];
 
   if (!enrollment) {
     return <p className="text-center text-danger mt-5">No course details available.</p>;

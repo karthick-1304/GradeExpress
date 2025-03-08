@@ -5,6 +5,7 @@ const pool= new Pool({
   user: 'postgres', // Replace with your PostgreSQL username
   password: '2004', // Replace with your PostgreSQL password
   database: 'gradeExpress', // Replace with your PostgreSQL database name
+  timezone: 'Asia/Kolkata',
 });
 
 const jwt = require("jsonwebtoken");

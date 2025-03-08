@@ -12,7 +12,7 @@ const fetchEnrollments=async (req, res) => {
           cr.enroll_proof ,
           cr.payment_proof,
           cr.exam_venue,
-          cr.exam_date,
+          cr.exam_date::TEXT,
           cr.exam_time
         FROM course_registration cr 
         JOIN course_details c ON c.code = cr.course_code 
@@ -78,7 +78,6 @@ const fetchEnrollments=async (req, res) => {
       course_code,section} = req.body;
     try {
       if(section=='hallticket'){
-        console.log(exam_date,exam_time);
         const result = await pool.query(
           `UPDATE course_registration 
            SET exam_venue=$1,exam_date=$2,exam_time=$3

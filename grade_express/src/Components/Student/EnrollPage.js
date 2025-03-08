@@ -157,7 +157,7 @@ const Enroll = ({ user }) => {
       } else {
         await axios
           .post("http://localhost:5000/updateEnrollment", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: { "Content-Type": "multipart/fo rm-data" },
           })
           .then((response) => {
             toast.success(`${activeSection} details updated successfully!`, {
