@@ -1,0 +1,83 @@
+.TTh1 {
+    margin-top: 20px;
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.table-containerOD {
+    margin-top: 30px;
+    max-height: 500px; /* Set a fixed height for the scrollable area */
+    overflow-y: auto;  /* Enables vertical scrolling */
+    overflow-x: hidden; /* Prevents horizontal shifting */
+    width: 100%; /* Ensures table stays within container */
+    position: relative;
+    display: block;
+}
+
+.styled-table {
+    width: 100%; /* Ensures the table stretches to container width */
+    border-collapse: collapse;
+}
+
+.styled-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #3f51b5; /* Keeps the header visible */
+    z-index: 2;
+}
+
+.styled-table tbody {
+    display: block;
+    overflow-y: auto;
+    max-height: 400px; /* Ensure proper alignment */
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+    width: 200px; /* Set a fixed width for uniformity */
+}
+
+.styled-table thead tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.styled-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+
+.filter-section {
+    margin-top: 20px;
+}
+
+.filter-section label {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.filter-section select {
+    padding: 8px;
+    font-size: 16px;
+}
+
+.filter-section button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.filter-section button:hover {
+    background-color: #218838;
+}

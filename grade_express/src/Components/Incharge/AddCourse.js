@@ -137,12 +137,12 @@ const AddCourse = ({user,logout}) => {
                   <Link to="/addCourse" className="text-decoration-none">
                     <li className="nav-item">Add Course</li>
                   </Link>
-                  <Link to="/" className="text-decoration-none">
-                    <li className="nav-item">Assignment Upload</li>
+                  <Link to="/od-report" className="text-decoration-none">
+                    <li className="nav-item">OD Report</li>
                   </Link>
                 </>
               )}
-              <Link to="/aboutUs" className="text-decoration-none">
+              <Link to="" className="text-decoration-none">
                 <li className="nav-item">Verify</li>
               </Link>
               <Link to="/"  onClick={()=>logout()} className="text-decoration-none">

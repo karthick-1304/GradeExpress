@@ -70,15 +70,10 @@ const fetchEnrollments=async (req, res) => {
   };
 
   const updateEnrollment=async (req, res) => {
-    console.log("Update Enrollment Reached");
     const { payment_proof,
       exam_venue,
       exam_date,
       exam_time,
-       consolidated_score,
-      assessment_score,
-      proctored_score,
-      certificate_link,
       register_number,
       course_code,section} = req.body;
     try {
@@ -98,12 +93,13 @@ const fetchEnrollments=async (req, res) => {
            SET payment_proof=$1
            WHERE course_code = $2 and student_regno=$3`,
           [payment_proof,course_code,register_number]
+          
       );
       res.json("Payment Details Updated");
       }
       
     } catch (err) {
-      console.error('Error updating enrollment:');
+      console.error('Error updating enrollment:',err);
       res.status(500).json({ error: 'Internal server error' });
     }
   };

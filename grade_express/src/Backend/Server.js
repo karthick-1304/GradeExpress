@@ -15,6 +15,8 @@ const { deleteStudent, getStudents, editStudent } = require("./student.js");
 const { fetchEnrollments, enrollCourse, deleteEnrollment, updateEnrollment } = require("./process.js");
 const { forgetPassword } = require("./email.js");
 const { addVerfication } = require("./verification.js");
+const { getCourseRegistrations, getUniqueExamDates, generateStudentExcel } = require("./OdList.js");
+
 app.use(cors()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -58,6 +60,11 @@ const upload = multer({ storage: storage , limits: { fileSize: 10 * 1024 * 1024 
   app.post('/updateEnrollment', upload.single("certificate"), updateEnrollment);
   app.post("/forgot-password",forgetPassword);
   app.post("/addVerfication_details",addVerfication);
+app.get("/course-registration/:dept", getCourseRegistrations);
+  app.get("/exam-dates/:dept", getUniqueExamDates);
+  app.get("/generate-excel/:dept/:exam_date", generateStudentExcel);
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

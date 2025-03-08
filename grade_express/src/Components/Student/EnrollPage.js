@@ -131,7 +131,10 @@ const Enroll = ({ user }) => {
     formData.append("exam_venue", editData.exam_venue);
     formData.append("exam_date", editData.exam_date);
     formData.append("exam_time", editData.exam_time);
+    formData.append("register_number", user?.regno);
+    formData.append("course_code", editingEnrollment.code);
     formData.append("certificate", editData.certificate);
+    formData.append("section", activeSection);
     try {
       if (activeSection == "certificate") {
         for (let pair of formData.entries()) {

@@ -9,7 +9,7 @@ const AdminPage = ({get}) => {
   const [students, setStudents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState(null);
-  const [newStaff, setNewStaff] = useState({ regno: '', name: '', email: '', dept: '', designation: '', password: '' });
+  const [newStaff, setNewStaff] = useState({ regno: '', name: '', email: '', dept: '', designation: '', password: '',phone_no:'' });
 
 
   const fetchStaffs = async () => {
@@ -35,7 +35,7 @@ const AdminPage = ({get}) => {
 
   const handleAddStaff = async () => {
     await axios.post('http://localhost:5000/addStaffs', newStaff);
-    setNewStaff({ regno: '', name: '', email: '', depr: '', designation: '', password: '' });
+    setNewStaff({ regno: '', name: '', email: '', depr: '', designation: '', password: '' ,phone_no:''});
     fetchStaffs();
     setShowModal(false);
   };
@@ -92,6 +92,7 @@ const AdminPage = ({get}) => {
           <th>Register Number</th>
           <th>Name</th>
           <th>Email</th>
+          <th>Phone Number</th>
           <th>Department</th>
           <th>Designation</th>
           <th>Action</th>
@@ -103,6 +104,7 @@ const AdminPage = ({get}) => {
               <td>{staff.regno}</td>
               <td>{staff.name}</td>
               <td>{staff.email}</td>
+              <td>{staff.phone_no}</td>
               <td>{staff.dept}</td>
               <td>{staff.designation}</td>
               <td>
@@ -192,6 +194,18 @@ const AdminPage = ({get}) => {
                 />
               </Form.Group>
               <Form.Group>
+                <Form.Label>Phone Number</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={selectedStaff ? selectedStaff.phone_no : newStaff.phone_no}
+                  onChange={(e) =>
+                    selectedStaff
+                      ? setSelectedStaff({ ...selectedStaff, phone_no: e.target.value })
+                      : setNewStaff({ ...newStaff, phone_no: e.target.value })
+                  }
+                />
+              </Form.Group>
+              <Form.Group>
                 <Form.Label>Department</Form.Label>
                 <Form.Control
                   as="select"
@@ -225,8 +239,8 @@ const AdminPage = ({get}) => {
               }
             >
               <option value="" hidden>Select Designation</option>
-              <option value="INCHARGE">NPTEL Staff Incharge</option>
-              <option value="TUTOR">Staff(Tutor)</option>
+              <option value="INCHARGE">NPTEL Incharge</option>
+              <option value="TUTOR">Tutor</option>
             </Form.Control>
           </Form.Group>
             <Form.Group>

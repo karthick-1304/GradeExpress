@@ -11,13 +11,14 @@
     "cors": "^2.8.5",
     "cra-template": "1.2.0",
     "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
     "express": "^4.21.2",
     "font-awesome": "^4.7.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.0",
     "pdf-parse": "^1.1.1",
-    "pg": "^8.13.1",
+    "pg": "^8.13.3",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
@@ -32,8 +33,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "backend": "node ./src/Backend/Server.js",
-    "python":"py ./src/Backend/app.py"
-
+    "python": "py ./src/Backend/app.py"
   },
   "eslintConfig": {
     "extends": [

@@ -9,9 +9,9 @@ const getStaff=async (req, res) => {
   };
 
   const addStaff=async (req, res) => {
-    const { regno, name, email, dept, designation, password } = req.body;
+    const { regno, name, email, dept, designation, password,phone_no } = req.body;
     try {
-      await pool.query('INSERT INTO staff_info (regno, name, email, dept, designation, password) VALUES ($1, $2, $3, $4, $5, $6)', [regno, name.toUpperCase(), email, dept, designation, password]);
+      await pool.query('INSERT INTO staff_info (regno, name, email, dept, designation, password,phone_no) VALUES ($1, $2, $3, $4, $5, $6,$7)', [regno, name.toUpperCase(), email, dept, designation, password,phone_no]);
       res.status(201).send('Staff added');
       console.log("Staff updated");
     } catch (err) {
@@ -20,9 +20,9 @@ const getStaff=async (req, res) => {
   }
 
   const editStaff=async (req, res) => {        
-    const { regno,name, email, dept, designation, password } = req.body;
+    const { regno,name, email, dept, designation, password ,phone_no} = req.body;
     try {
-      await pool.query('UPDATE staff_info SET name = $1, email = $2, dept = $3, designation = $4, password = $5 WHERE regno = $6', [name, email, dept, designation, password, regno]);
+      await pool.query('UPDATE staff_info SET name = $1, email = $2, dept = $3, designation = $4, password = $5, phone_no= $6 WHERE regno = $7', [name, email, dept, designation, password,phone_no, regno]);
       res.send('Staff updated');
       console.log("Staff updated");
     } catch (err) {
