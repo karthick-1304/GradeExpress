@@ -19,6 +19,13 @@ import { Navigate } from 'react-router-dom';
 import Verify from './Components/Incharge/Verify.js';
 import DisplayCourse_info from './Components/Student/DisplayCourse_info.js';
 import OdList from './Components/Incharge/OdList.js';
+
+import StudentCourses from "./Components/Incharge/StudentCourses.js";
+import AddStudents from './Components/Incharge/AddStudents.js';
+import CourseList from './Components/Incharge/CourseList.js';
+import CourseDetails from './Components/Incharge/CourseDetails.js';
+import DemoGraph from './Components/Incharge/DemoGraph.js';
+import HandleIndVerify from './Components/Incharge/HandleIndVerify.js';
 function App() {
    const [user,setUser]=useState({});
    const navigae=useNavigate();
@@ -128,6 +135,15 @@ function App() {
         <Route path='/verifyCertificate' element={<Verify user={user} setUser={setUser}logout={logout}/>}></Route>
         <Route path='/course-details' element={<DisplayCourse_info/>}></Route>
         <Route path='/od-report' element={<OdList  user={user} setUser={setUser}logout={logout}/>}></Route>
+
+        <Route path="/add-students" element={<AddStudents user={user} />} />
+        <Route path="/courses" element={<CourseList logout={logout} />} />
+        <Route path="/course/:courseCode" element={<CourseDetails logout={logout}/>} />
+        <Route path="/student/:regno/courses" element={<StudentCourses />} />
+        <Route path="/handleIndVerify" element={<HandleIndVerify user={user} setUser={setUser}logout={logout}/>} />
+
+    
+        <Route path="/graph" element={<DemoGraph />} />
      </Routes>
      <Toaster/>
     </div>
