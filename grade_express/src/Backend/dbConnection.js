@@ -3,7 +3,7 @@ const pool= new Pool({
   host: 'localhost', 
   port: 5432, 
   user: 'postgres', // Replace with your PostgreSQL username
-  password: '2004', // Replace with your PostgreSQL password
+  password: 'karthi@3737', // Replace with your PostgreSQL password
   database: 'gradeExpress', // Replace with your PostgreSQL database name
   timezone: 'Asia/Kolkata',
 });
@@ -32,6 +32,8 @@ const login=async (req, res) => {
           tutor_name: user.tutor_name,
           phone_no: user.phone_no,
           year_of_joining: user.year_of_joining,
+          credits_earned: user.credits_earned,
+          photo: user.photo,
           role
         }
       }
@@ -42,8 +44,11 @@ const login=async (req, res) => {
           password:user.password,
           email: user.email,
           dept: user.dept,
-          designation:user.designation,
+          designation: user.designation ? user.designation.split(',').map(item => item.trim()) : [],
           phone_no: user.phone_no,
+          tutor_year:user.tutor,
+          tutorward:user.tutor_ward,
+          photo: user.photo,
           role
           // tutor_ward
         }
@@ -86,15 +91,17 @@ const authMiddleware = (req, res, next) => {
     let data;
     if(role=="Student"){
       data={
-        regno: user.regno,
-        name: user.name,
-        password:user.password,
-        email: user.email,
-        dept: user.dept,
-        tutor_name: user.tutor_name,
-        phone_no: user.phone_no,
-        year_of_joining: user.year_of_joining,
-        role
+          regno: user.regno,
+          name: user.name,
+          password:user.password,
+          email: user.email,
+          dept: user.dept,
+          tutor_name: user.tutor_name,
+          phone_no: user.phone_no,
+          year_of_joining: user.year_of_joining,
+          credits_earned: user.credits_earned,
+          photo: user.photo,
+          role
       }
     }
     else{
@@ -104,8 +111,11 @@ const authMiddleware = (req, res, next) => {
         password:user.password,
         email: user.email,
         dept: user.dept,
-        designation:user.designation,
+        designation: user.designation ? user.designation.split(',').map(item => item.trim()) : [],
         phone_no: user.phone_no,
+        tutor_year:user.tutor,
+        tutorward:user.tutor_ward,
+        photo: user.photo,
         role
         // tutor_ward
       }

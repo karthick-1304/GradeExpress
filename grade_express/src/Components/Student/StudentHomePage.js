@@ -56,6 +56,7 @@ const StudentHomePage = ({user,setUser,logout}) => {
             <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul className="navbar-nav gap-4">
                 <Link  to={`/${user.role}HomePage`} className="text-decoration-none"><li className="nav-item">Home</li></Link>
+                <Link to="/courses" state={{ user }} className="text-decoration-none"><li className="nav-item">Courses</li></Link>
                 <Link to="/enroll" className="text-decoration-none"><li className="nav-item">Enroll</li></Link>
                 <Link to="/contact" className="text-decoration-none"><li className="nav-item">Result</li></Link>
                 <Link to="/"  onClick={()=>logout()} className="text-decoration-none"><li className="nav-item">Logout</li></Link>

@@ -1,47 +1,70 @@
-import React, { useEffect } from "react";
+import {React,useEffect,useState} from "react";
 import IMG from "./student_jump_img.jpg";
-import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate,useLocation} from "react-router-dom";
 
 const InchargeHomePage = ({ user, setUser,logout }) => {
-  // console.log("Staff Home Page:",user);
+
   const [showModal, setShowModal] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(user);
-  const studentsList = [
-    {
-      regno: "2212074",
-      name: "SELVARAJ R",
-      credits: 15,
-      completed: 3,
-      ongoing: 2,
-    },
-    {
-      regno: "2212075",
-      name: "HEMALATHA",
-      credits: 20,
-      completed: 4,
-      ongoing: 2,
-    },
-    {
-      regno: "2212076",
-      name: "PONKARTHIKEYAN P",
-      credits: 20,
-      completed: 5,
-      ongoing: 2,
-    },
-    {
-      regno: "2212077",
-      name: "SANKARANARAYANAN",
-      credits: 15,
-      completed: 3,
-      ongoing: 3,
-    },
-  ];
+  const [studentsList, setStudentsList] = useState([]);
+  const [deleteRegNo, setDeleteRegNo] = useState(""); 
+  const navigate=useNavigate();
+  const location = useLocation();
+
+
+
+
+  const fetchStudents = () => {
+    if (Array.isArray(user.designation) && user.designation.includes("Tutor")) {
+      console.log("Fetching students for tutorward:", user.tutorward);  
+      axios
+        .get("http://localhost:5000/studentsTutorward", {
+          params: { tutorward: user.tutorward }
+        })
+        .then((response) => {
+          setStudentsList(response.data);
+          console.log("Students Fetched Successfully!", response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching students:", error);
+        });
+    }
+  };
+  const listStudents = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/${user.regno}/listofwardstudents`, {
+        params: { tutorId: user.regno }
+      });
+  
+      console.log('pk');
+      console.log(response.data);
+  
+      // Extract tutor_ward from the first object in the array
+      if (response.data.length > 0 && response.data[0].tutor_ward) {
+        user.tutorward = response.data[0].tutor_ward;
+        fetchStudents(); // Call fetchStudents after listStudents finishes
+      } else {
+        console.warn("No tutor_ward data found");
+      }
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
+  };
+  
+  useEffect(() => { // Call the function
+    listStudents()
+    console.log("received");
+  }, [location]);
+  
+
   const handleEditClick = () => {
     setUpdatedUser(user);
     setShowModal(true);
+  };
+  const handleStudentClick = (regno, name) => {
+    navigate(`/student/${regno}/courses`, { state: { studentName: name } });
   };
 
   const handleChange = (e) => {
@@ -50,7 +73,6 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setUser(updatedUser);
-    console.log(updatedUser);
     setShowModal(false);
     axios
       .put("http://localhost:5000/editProfileStaff", updatedUser)
@@ -70,14 +92,42 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
         });
       });
   };
-
+  const handleDeleteStudent = async () => {
+    let f=1
+    for (let i = 0; i < studentsList.length; i++) {
+      if (studentsList[i].regno === deleteRegNo) {
+        console.log(studentsList[i].regno);
+        f=0;
+      }
+    }
+    if (!deleteRegNo.trim() ||f==1) {
+      toast.error("Enter a valid RegNo!", { position: "top-center" });
+      return;
+    }
+    
+  
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/remove-student/${user.regno}`,
+        { studentRegNo: deleteRegNo }
+      );
+      
+      toast.success(response.data.message, { position: "top-center" });
+      setDeleteRegNo(""); // Clear input field
+      listStudents(); 
+  
+    } catch (error) {
+      console.error("Error removing student:", error);
+      toast.error("Failed to remove student!", { position: "top-center" });
+    }
+  };
 
   return (
     <div className="outer-container-incharge">
       <nav className="navbar navbar-expand-lg shadow py-3">
         <div className="container">
           <h1 style={{ color: "##F7DBA7", fontSize: "23px" }}>
-            WELCOME {user?.name?.toUpperCase()} !
+            Welcome {user?.name?.toUpperCase()} !!!
           </h1>
           <div
             className="collapse navbar-collapse justify-content-end"
@@ -87,7 +137,10 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
               <Link to={`/${user.role}HomePage`}className="text-decoration-none">
                 <li className="nav-item">Home</li>
               </Link>
-              {user.designation === "Incharge" && (
+              <Link to="/courses" state={{ user }} className="text-decoration-none">
+                <li className="nav-item">Courses</li>
+              </Link>
+              {Array.isArray(user.designation) && user.designation.includes("Incharge") && (
                 <>
                   <Link to="/addCourse" className="text-decoration-none">
                     <li className="nav-item">Add Course</li>
@@ -97,9 +150,13 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
                   </Link>
                 </>
               )}
-              <Link to="/verifyCertificate" className="text-decoration-none">
+              {Array.isArray(user.designation) && user.designation.includes("Tutor")&& (
+                <>
+                <Link to="/verifyCertificate" className="text-decoration-none">
                 <li className="nav-item">Verify</li>
               </Link>
+                </>
+              )}  
               <Link to="/"  onClick={()=>logout()} className="text-decoration-none">
                 <li className="nav-item">Logout</li>
               </Link>
@@ -116,6 +173,7 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
           </div>
 
           <table className="profile-table">
+            <tbody>
             <tr>
               <th>Name</th>
               <td>{user.name}</td>
@@ -136,6 +194,7 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
               <th>Department</th>
               <td>{user.dept}</td>
             </tr>
+            </tbody>
           </table>
           <div>
             <button className="student-profile-btn" onClick={handleEditClick}>
@@ -174,8 +233,28 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
           </div>
         </div>
       )}
-      <div>
+      {Array.isArray(user.designation) && user.designation.includes("Tutor") && (
+        <div>
         <h1 className="student-head">Tutor Ward</h1>
+          <button className="btn btn-primary d-flex justify-content-end" 
+            onClick={() => navigate("/add-students")}
+            style={{ marginLeft: "100px" }}
+            >
+            Add Students
+        </button>
+        <div style={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter Student RegNo"
+              value={deleteRegNo}
+              onChange={(e) => setDeleteRegNo(e.target.value)}
+              style={{ width: "250px", marginRight: "10px" ,marginLeft:"240px",marginTop:"-55px"}}
+            />
+            <button className="btn btn-danger" onClick={handleDeleteStudent} style={{ marginTop:"-55px"}}>
+              Remove Student
+            </button>
+          </div>
         <div>
           <table className="tutorward-table">
             <thead>
@@ -183,24 +262,25 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
                 <th>RegNo</th>
                 <th>Name</th>
                 <th>No of Credits earned</th>
-                <th>Completed</th>
-                <th>On Going</th>
               </tr>
             </thead>
-            <tbody>
-              {studentsList.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.regno}</td>
-                  <td>{item.name}</td>
-                  <td>{item.credits}</td>
-                  <td>{item.completed}</td>
-                  <td>{item.ongoing}</td>
-                </tr>
-              ))}
+              <tbody>
+                {studentsList.map((item, index) => (
+                    <tr
+                        key={index}
+                        onClick={() => handleStudentClick(item.regno, item.name)}
+                        style={{ cursor: "pointer" }}
+                    >
+                        <td>{item.regno}</td>
+                        <td>{item.name}</td>
+                        <td>{item.credits_earned}</td>
+                    </tr>
+                ))}
             </tbody>
           </table>
         </div>
       </div>
+        )} 
     </div>
   );
 };

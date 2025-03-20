@@ -1,0 +1,124 @@
+/* Custom Bootstrap Enhancements */
+body {
+    background: linear-gradient(to right, #f8f9fa, #e3f2fd);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Container Styling */
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: auto;
+}
+
+/* Header */
+h2 {
+    color: #007bff;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Section Headings */
+h4 {
+    color: #343a40;
+    font-weight: 500;
+    border-left: 5px solid #007bff;
+    padding-left: 10px;
+}
+
+/* Input Fields */
+input.form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: 0.3s;
+    padding: 10px;
+}
+
+input.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Buttons */
+.btn {
+    font-size: 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-primary {
+    background: #007bff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-success {
+    background: #28a745;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #1e7e34;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+}
+
+/* Table Styling */
+.table {
+    margin-top: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead {
+    background: #007bff;
+    color: white;
+}
+
+.table tbody tr:nth-child(odd) {
+    background: #f8f9fa;
+}
+
+.table tbody tr:nth-child(even) {
+    background: #e9ecef;
+}
+
+.table th, .table td {
+    text-align: center;
+    padding: 12px;
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #007bff;
+}
+
+/* Success Message Styling */
+.toast-success {
+    background: #28a745;
+    color: white;
+}
+
+/* Error Message Styling */
+.toast-error {
+    background: #dc3545;
+    color: white;
+}

@@ -258,6 +258,9 @@ const Enroll = ({ user }) => {
               >
                 <li className="nav-item">Home</li>
               </Link>
+              <Link to="/courses" state={{ user }} className="text-decoration-none">
+                <li className="nav-item">Courses</li>
+              </Link>
               <Link to="/enroll" className="text-decoration-none">
                 <li className="nav-item">Enroll</li>
               </Link>

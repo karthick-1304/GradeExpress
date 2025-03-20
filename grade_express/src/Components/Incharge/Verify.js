@@ -1,48 +1,127 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { Link, useParams,useLocation } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 const Verify = ({user,setUser,logout}) => {
-    const certificateList=[
-        {name:"KARAN",course_name:"IOT",link:""},
-        {name:"PONKARTHIKEYAN",course_name:"CLOUD COMPUTING",link:""}
-    ]
+  const navigate = useNavigate();
+  const regno  = user.regno; // Get tutor regno from URL
+  console.log("Tutor RegNo:", regno);
+  const [verificationData, setVerificationData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const location = useLocation();
+
+  useEffect(() => {
+      if (regno) {
+          axios.get(`http://localhost:5000/studentsVerify/${regno}`).then((response) => {
+                  setVerificationData(response.data);
+                  console.log("Verification Data Fetched Successfully!", response.data);
+              })
+              .catch((error) => {
+                  console.error("Error fetching verification data:", error);
+                  setError("Failed to fetch verification records.");
+              })
+              .finally(() => setLoading(false));
+      }
+  }, [location]);
+
+
+  const handleRowClick = (details) => {
+    navigate("/handleIndVerify", { state: { details } });
+  };
+
+console.log(verificationData);
+  if (loading) return <p>Loading verification records...</p>;
+  if (error) return <p>{error}</p>;
   return (
     <div className='outer-container-incharge'>
         <nav className="navbar navbar-expand-lg shadow py-3">
-        <div className="container">
-          <h1 style={{ color: "##F7DBA7", fontSize: "23px" }}>
-            WELCOME {user?.name?.toUpperCase()} !
-          </h1>
-          <div
-            className="collapse navbar-collapse justify-content-end"
-            id="navbarNav"
-          >
-            <ul className="navbar-nav gap-4">
-              <Link to={`/${user.role}HomePage`}className="text-decoration-none">
-                <li className="nav-item">Home</li>
-              </Link>
-              {user.designation === "Incharge" && (
-                <>
-                  <Link to="/addCourse" className="text-decoration-none">
-                    <li className="nav-item">Add Course</li>
-                  </Link>
-                  <Link to="/od-report" className="text-decoration-none">
-                    <li className="nav-item">OD Report</li>
-                  </Link>
-                </>
-              )}
-              <Link to="/verifyCertificate" className="text-decoration-none">
-                <li className="nav-item">Verify</li>
-              </Link>
-              <Link to="/"  onClick={()=>logout()} className="text-decoration-none">
-                <li className="nav-item">Logout</li>
-              </Link>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      <ul>
-        <li></li>
-      </ul>
+                            <div className="container">
+                              <div
+                                className="collapse navbar-collapse justify-content-end"
+                                id="navbarNav"
+                              >
+                                <ul className="navbar-nav gap-4">
+                                  <Link to={`/${user.role}HomePage`}className="text-decoration-none">
+                                    <li className="nav-item">Home</li>
+                                  </Link>
+                                  <Link to="/courses" state={{ user }} className="text-decoration-none">
+                                    <li className="nav-item">Courses</li>
+                                  </Link>
+                                  {Array.isArray(user.designation) && user.designation.includes("Incharge") && (
+                                    <>
+                                      <Link to="/addCourse" className="text-decoration-none">
+                                        <li className="nav-item">Add Course</li>
+                                      </Link>
+                                      <Link to="/od-report" className="text-decoration-none">
+                                        <li className="nav-item">OD Report</li>
+                                      </Link>
+                                    </>
+                                  )}
+                                  {Array.isArray(user.designation) && user.designation.includes("Tutor")&& (
+                                    <>
+                                    <Link to="/verifyCertificate" className="text-decoration-none">
+                                    <li className="nav-item">Verify</li>
+                                  </Link>
+                                    </>
+                                  )}  
+                                  <Link to="/"  onClick={()=>logout()} className="text-decoration-none">
+                                    <li className="nav-item">Logout</li>
+                                  </Link>
+                                </ul>
+                              </div>
+                            </div>
+                          </nav>
+            <div className="container mt-5">
+          <h2 className="mb-4 text-primary text-center text-uppercase fw-bold">
+              Verification List
+          </h2>
+
+          {verificationData.length > 0 ? (
+              <div className="table-responsive shadow-lg p-3 bg-white rounded"> {/* Adds shadow effect */}
+                  <table className="table table-hover table-bordered table-striped align-middle">
+                      <thead className="bg-gradient bg-primary text-white">
+                      <tr className="text-center" style={{ backgroundColor: "#111111" }}>
+                          <th scope="col">Reg No</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Course Code</th>
+                          <th scope="col">Score</th>
+                          <th scope="col">Certificate</th>
+                      </tr>
+                      </thead>
+                      <tbody className="table-light">
+                          {verificationData.map((cert, index) => {
+                              const details = cert.extracted_details;
+                              return (
+                                <tr key={index} className="text-center" onClick={() => handleRowClick(details)}>
+                                <td className="fw-semibold">{cert.student_regno}</td>
+                                <td className="fw-semibold">{cert.name}</td>
+                                <td>{cert.course_code}</td>
+                                <td className="fw-bold text-success">{details.consolidated_score}</td>
+                                <td>
+                                  <a
+                                    href={details.certificate_link}
+                                    className="btn btn-outline-success btn-sm rounded-pill px-3 shadow-sm"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()} // Prevent row click from triggering when clicking the link
+                                  >
+                                    🎓 View Certificate
+                                  </a>
+                                </td>
+                              </tr>                              
+                              );
+                          })}
+                      </tbody>
+                  </table>
+              </div>
+          ) : (
+              <div className="alert alert-warning text-center fs-5 fw-bold shadow-sm">
+                  ⚠ No verification records found for your students.
+              </div>
+          )}
+      </div>
     </div>
   )
 }

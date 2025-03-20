@@ -1,0 +1,36 @@
+.course-container {
+  max-width: 1100px;
+}
+
+.course-header-card {
+  background: #f8f9fa;
+  border-left: 5px solid #007bff;
+}
+
+.course-title {
+  font-weight: bold;
+  color: #343a40;
+}
+
+.proceed-button {
+  width: 100%;
+  max-width: 250px;
+}
+
+.nav-tabs .nav-link {
+  font-weight: bold;
+}
+
+.student-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.grade-o {
+  color: green;
+  font-weight: bold;
+}
+
+.grade-ra {
+  color: red;
+  font-weight: bold;
+}
