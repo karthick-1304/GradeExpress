@@ -3,6 +3,7 @@ import "./AddCourse.css";
 import axios from 'axios';
 import { Table, Button, Modal, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import RoleBasedHeader from '../Common_pages/RoleBasedHeader';
 const AddCourse = ({user,logout}) => {
     const [courses, setCourses] = useState([]);
     const [displayCourses, setDisplayCourses] = useState([]);
@@ -119,39 +120,7 @@ const AddCourse = ({user,logout}) => {
 
     return (
         <div className='outer-container-incharge'>
-            <nav className="navbar navbar-expand-lg shadow py-3">
-        <div className="container">
-          <h1 style={{ color: "##F7DBA7", fontSize: "23px" }}>
-            WELCOME {user?.name?.toUpperCase()} !
-          </h1>
-          <div
-            className="collapse navbar-collapse justify-content-end"
-            id="navbarNav"
-          >
-            <ul className="navbar-nav gap-4">
-              <Link to={`/${user.role}HomePage`}className="text-decoration-none">
-                <li className="nav-item">Home</li>
-              </Link>
-              {user.designation === "Incharge" && (
-                <>
-                  <Link to="/addCourse" className="text-decoration-none">
-                    <li className="nav-item">Add Course</li>
-                  </Link>
-                  <Link to="/od-report" className="text-decoration-none">
-                    <li className="nav-item">OD Report</li>
-                  </Link>
-                </>
-              )}
-              <Link to="" className="text-decoration-none">
-                <li className="nav-item">Verify</li>
-              </Link>
-              <Link to="/"  onClick={()=>logout()} className="text-decoration-none">
-                <li className="nav-item">Logout</li>
-              </Link>
-            </ul>
-          </div>
-        </div>
-      </nav>
+           <RoleBasedHeader user={user} logout={logout}/>
             <div className="admin-page">
                 <h1 className='course-h2'>Course Management</h1>
                 <div className='course-search-container'>

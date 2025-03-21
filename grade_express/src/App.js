@@ -26,6 +26,7 @@ import CourseList from './Components/Incharge/CourseList.js';
 import CourseDetails from './Components/Incharge/CourseDetails.js';
 import DemoGraph from './Components/Incharge/DemoGraph.js';
 import HandleIndVerify from './Components/Incharge/HandleIndVerify.js';
+import RoleBasedHeader from './Components/Common_pages/RoleBasedHeader.js';
 function App() {
    const [user,setUser]=useState({});
    const navigae=useNavigate();
@@ -133,13 +134,12 @@ function App() {
         <Route path='/AdminHomePage' element={<AdminPage get={get} logout={logout}/>}></Route>
         <Route path='/enroll' element={<Enroll user={user} setUser={setUser}/>}></Route>
         <Route path='/verifyCertificate' element={<Verify user={user} setUser={setUser}logout={logout}/>}></Route>
-        <Route path='/course-details' element={<DisplayCourse_info/>}></Route>
+        <Route path='/course-details' element={<DisplayCourse_info user={user} logout={logout}/>}></Route>
         <Route path='/od-report' element={<OdList  user={user} setUser={setUser}logout={logout}/>}></Route>
-
-        <Route path="/add-students" element={<AddStudents user={user} />} />
-        <Route path="/courses" element={<CourseList logout={logout} />} />
-        <Route path="/course/:courseCode" element={<CourseDetails logout={logout}/>} />
-        <Route path="/student/:regno/courses" element={<StudentCourses />} />
+        <Route path="/add-students" element={<AddStudents user={user} logout={logout} />} />
+        <Route path="/courses" element={<CourseList user={user} logout={logout} />} />
+        <Route path="/course/:courseCode" element={<CourseDetails user={user} logout={logout}/>} />
+        <Route path="/student/:regno/courses" element={<StudentCourses user={user} logout={logout} />} />
         <Route path="/handleIndVerify" element={<HandleIndVerify user={user} setUser={setUser}logout={logout}/>} />
 
     

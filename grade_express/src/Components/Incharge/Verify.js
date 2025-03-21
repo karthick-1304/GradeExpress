@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams,useLocation } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import RoleBasedHeader from "../Common_pages/RoleBasedHeader";
 const Verify = ({user,setUser,logout}) => {
   const navigate = useNavigate();
   const regno  = user.regno; // Get tutor regno from URL
@@ -36,44 +36,8 @@ console.log(verificationData);
   if (error) return <p>{error}</p>;
   return (
     <div className='outer-container-incharge'>
-        <nav className="navbar navbar-expand-lg shadow py-3">
-                            <div className="container">
-                              <div
-                                className="collapse navbar-collapse justify-content-end"
-                                id="navbarNav"
-                              >
-                                <ul className="navbar-nav gap-4">
-                                  <Link to={`/${user.role}HomePage`}className="text-decoration-none">
-                                    <li className="nav-item">Home</li>
-                                  </Link>
-                                  <Link to="/courses" state={{ user }} className="text-decoration-none">
-                                    <li className="nav-item">Courses</li>
-                                  </Link>
-                                  {Array.isArray(user.designation) && user.designation.includes("Incharge") && (
-                                    <>
-                                      <Link to="/addCourse" className="text-decoration-none">
-                                        <li className="nav-item">Add Course</li>
-                                      </Link>
-                                      <Link to="/od-report" className="text-decoration-none">
-                                        <li className="nav-item">OD Report</li>
-                                      </Link>
-                                    </>
-                                  )}
-                                  {Array.isArray(user.designation) && user.designation.includes("Tutor")&& (
-                                    <>
-                                    <Link to="/verifyCertificate" className="text-decoration-none">
-                                    <li className="nav-item">Verify</li>
-                                  </Link>
-                                    </>
-                                  )}  
-                                  <Link to="/"  onClick={()=>logout()} className="text-decoration-none">
-                                    <li className="nav-item">Logout</li>
-                                  </Link>
-                                </ul>
-                              </div>
-                            </div>
-                          </nav>
-            <div className="container mt-5">
+          <RoleBasedHeader user={user} logout={logout}/> 
+          <div className="container mt-5">
           <h2 className="mb-4 text-primary text-center text-uppercase fw-bold">
               Verification List
           </h2>

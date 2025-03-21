@@ -7,15 +7,16 @@ import BellCurveChart from "./BellCurveChart";
 import axios from "axios";
 import "./CourseDetails.css"; // Custom Styles
 import { Toaster, toast } from "react-hot-toast";
-
+import RoleBasedHeader from "../Common_pages/RoleBasedHeader";
 
 const CourseDetails = ({logout}) => {
   const { courseCode } = useParams();
   const location = useLocation();
   const { user, courseInfo } = location.state;
-  console.log(courseInfo,user);
+  console.log("course_info",courseInfo);
+  console.log("user",user);
 
-  const isStaff = user.designation.includes("Incharge")&&user?.dept===courseInfo['domain']; // ✅ STAFF CHECK
+  const isStaff = user.designation?.includes("Incharge")&&user?.dept===courseInfo['domain']; // ✅ STAFF CHECK
 
 
   const [students, setStudents] = useState([]);
@@ -89,44 +90,8 @@ const CourseDetails = ({logout}) => {
 
   return (
     <>
-
-    <nav className="navbar navbar-expand-lg shadow py-3">
-                        <div className="container">
-                          <div
-                            className="collapse navbar-collapse justify-content-end"
-                            id="navbarNav"
-                          >
-                            <ul className="navbar-nav gap-4">
-                              <Link to={`/${user.role}HomePage`}className="text-decoration-none">
-                                <li className="nav-item">Home</li>
-                              </Link>
-                              <Link to="/courses" state={{ user }} className="text-decoration-none">
-                                <li className="nav-item">Courses</li>
-                              </Link>
-                              {Array.isArray(user.designation) && user.designation.includes("Incharge") && (
-                                <>
-                                  <Link to="/addCourse" className="text-decoration-none">
-                                    <li className="nav-item">Add Course</li>
-                                  </Link>
-                                  <Link to="/od-report" className="text-decoration-none">
-                                    <li className="nav-item">OD Report</li>
-                                  </Link>
-                                </>
-                              )}
-                              {Array.isArray(user.designation) && user.designation.includes("Tutor")&& (
-                                <>
-                                <Link to="/verifyCertificate" className="text-decoration-none">
-                                <li className="nav-item">Verify</li>
-                              </Link>
-                                </>
-                              )}  
-                              <Link to="/"  onClick={()=>logout()} className="text-decoration-none">
-                                <li className="nav-item">Logout</li>
-                              </Link>
-                            </ul>
-                          </div>
-                        </div>
-                      </nav>
+    <RoleBasedHeader user={user} logout={logout}/> 
+   
     <Container className="course-container mt-4">
       
       {/* 🔹 COURSE HEADER */}

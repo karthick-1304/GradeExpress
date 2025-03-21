@@ -4,7 +4,8 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "./EnrollPage.css";
 import { Toaster, toast } from "react-hot-toast";
-const Enroll = ({ user }) => {
+import RoleBasedHeader from "../Common_pages/RoleBasedHeader.js"
+const Enroll = ({ user,logout }) => {
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
   const [result, setResult] = useState(null);
@@ -242,38 +243,7 @@ const Enroll = ({ user }) => {
 
   return (
     <div className="student-outer-container">
-      <nav className="navbar navbar-expand-lg shadow py-3">
-        <div className="container">
-          <h1 style={{ color: "##F7DBA7", fontSize: "23px" }}>
-            WELCOME {user.name}!
-          </h1>
-          <div
-            className="collapse navbar-collapse justify-content-end"
-            id="navbarNav"
-          >
-            <ul className="navbar-nav gap-4">
-              <Link
-                to={`/${user.role}HomePage`}
-                className="text-decoration-none"
-              >
-                <li className="nav-item">Home</li>
-              </Link>
-              <Link to="/courses" state={{ user }} className="text-decoration-none">
-                <li className="nav-item">Courses</li>
-              </Link>
-              <Link to="/enroll" className="text-decoration-none">
-                <li className="nav-item">Enroll</li>
-              </Link>
-              <Link to="/contact" className="text-decoration-none">
-                <li className="nav-item">Result</li>
-              </Link>
-              <Link to="/" className="text-decoration-none">
-                <li className="nav-item">Logout</li>
-              </Link>
-            </ul>
-          </div>
-        </div>
-      </nav>
+      <RoleBasedHeader user={user} logout={logout}/> 
       <h1 className="enrollPage-header">Course Enrollment</h1>
 
       <div className="enrollPage-tableContainer">

@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import jsQR from "jsqr"; // Import jsQR for QR code scanning
+import RoleBasedHeader from "../Common_pages/RoleBasedHeader";
 
-
-const HandleIndVerify = () => {
+const HandleIndVerify = ({user,logout}) => {
   const location = useLocation();
   const  verifiedData = location.state.details || {}; // Full JSON data
   console.log("Verified Data:", verifiedData);
@@ -97,6 +97,7 @@ const HandleIndVerify = () => {
 
   return (
     <div className="container">
+      <RoleBasedHeader user={user} logout={logout}/> 
       <h2>Certificate Verification</h2>
 
       {/* Display extracted data */}
