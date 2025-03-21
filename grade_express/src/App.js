@@ -27,6 +27,7 @@ import CourseDetails from './Components/Incharge/CourseDetails.js';
 import DemoGraph from './Components/Incharge/DemoGraph.js';
 import HandleIndVerify from './Components/Incharge/HandleIndVerify.js';
 import RoleBasedHeader from './Components/Common_pages/RoleBasedHeader.js';
+import RegiterCourse from './Components/Incharge/RegiterCourse.js';
 function App() {
    const [user,setUser]=useState({});
    const navigae=useNavigate();
@@ -131,6 +132,7 @@ function App() {
         <Route path='/StudentHomePage' element={<StudentHomePage user={user} setUser={setUser} logout={logout}/>}></Route>
         <Route path='/StaffHomePage' element={<InchargeHomePage user={user} setUser={setUser} logout={logout}/>}></Route>
         <Route path='/addCourse' element={<AddCourse user={user} setUser={setUser} logout={logout}/>}></Route>
+        <Route path='/registerCourse' element={<RegiterCourse user={user} setUser={setUser} logout={logout}/>}></Route>
         <Route path='/AdminHomePage' element={<AdminPage get={get} logout={logout}/>}></Route>
         <Route path='/enroll' element={<Enroll user={user} setUser={setUser}/>}></Route>
         <Route path='/verifyCertificate' element={<Verify user={user} setUser={setUser}logout={logout}/>}></Route>

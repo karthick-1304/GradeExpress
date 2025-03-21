@@ -38,9 +38,11 @@ const Enroll = ({ user,logout }) => {
   const fetchCourses = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/getCoursesToEnroll"
+        `http://localhost:5000/getCoursesToEnroll/${user.dept}`
       );
       setCourses(response.data);
+      console.log(response.data);
+      console.log("courses venum",response.data);
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
@@ -54,7 +56,7 @@ const Enroll = ({ user,logout }) => {
         { register_number: user.regno }
       );
       setEnrollments(response.data);
-      console.log(response.data);
+      
     } catch (error) {
       console.error("Error fetching enrollments:", error);
     }

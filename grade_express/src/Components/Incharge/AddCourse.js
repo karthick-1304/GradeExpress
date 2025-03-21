@@ -12,9 +12,8 @@ const AddCourse = ({user,logout}) => {
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [searchName,setSearchName]=useState();
     const [formData, setFormData] = useState({
-        domain: "",
         name: "",
-        iscredit: false,
+        credits_count: 0,
         code: "",
         no_of_weeks: "",
         st_date: new Date().toISOString().split('T')[0], // Default to current date
@@ -25,10 +24,10 @@ const AddCourse = ({user,logout}) => {
     });
     const fetchCourses = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/getCourses');
+            const response = await axios.get(`http://localhost:5000/getCourses/${user.dept}`);
             setCourses(response.data);
             setDisplayCourses(response.data);
-            console.log(response.data);
+            console.log("courses",response.data);
         } catch (error) {
             console.error("Error fetching courses:", error);
         }
@@ -48,6 +47,7 @@ const AddCourse = ({user,logout}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        formData["domain"]=user.dept;
         try {
             if (editMode) {
                 await axios.put(`http://localhost:5000/editCourse/${selectedCourse.code}`, formData);
@@ -64,9 +64,8 @@ const AddCourse = ({user,logout}) => {
     const handleAddCourse = () => {
         setEditMode(false);
         setFormData({
-            domain: "",
             name: "",
-            iscredit: false,
+            credits_count: 0,
             code: "",
             no_of_weeks: "",
             st_date: new Date().toISOString().split('T')[0], 
@@ -132,8 +131,7 @@ const AddCourse = ({user,logout}) => {
                         <tr>
                             <th>Course Code</th>
                             <th>Name</th>
-                            <th>Domain</th>
-                            <th>Credit Type</th>
+                            <th>No Of Credit</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -142,8 +140,7 @@ const AddCourse = ({user,logout}) => {
                             <tr key={course.code}>
                                 <td>{course.code}</td>
                                 <td>{course.name}</td>
-                                <td>{course.domain}</td>
-                                <td>{course.iscredit?"Yes":"No"}</td>
+                                <td>{course.credits_count>0?"Yes":"No"}</td>
                                 <td>
                                     <Button variant="warning" onClick={() => handleEditCourse(course)}>Edit</Button>{' '}
                                     <Button variant="danger" onClick={() => handleDeleteCourse(course.code)}>Delete</Button>
@@ -169,8 +166,8 @@ const AddCourse = ({user,logout}) => {
                             <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Domain</Form.Label>
-                            <Form.Control type="text" name="domain" value={formData.domain} onChange={handleChange} required />
+                            <Form.Label> Number of Credits</Form.Label>
+                            <Form.Control type="number" name="credits_count" value={formData.credits_count} onChange={handleChange} required />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Instructor</Form.Label>
@@ -196,9 +193,7 @@ const AddCourse = ({user,logout}) => {
                             <Form.Label>Assignment Drive Link</Form.Label>
                             <Form.Control type="text" name="assignment_drive_link" value={formData.assignment_drive_link} onChange={handleChange} required />
                         </Form.Group>
-                        <Form.Group controlId="iscredit">
-                            <Form.Check type="checkbox" label="Credit Course" name="iscredit" checked={formData.iscredit} onChange={handleChange} />
-                        </Form.Group>
+                        
                         <Button variant="primary" type="submit">
                             {editMode ? "Update" : "Add"}
                         </Button>

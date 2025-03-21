@@ -36,6 +36,9 @@ const RoleBasedHeader = ({user,logout}) => {
                   <Link to="/addCourse" className="text-decoration-none">
                     <li className="nav-item">Add Course</li>
                   </Link>
+                  <Link to="/registerCourse" className="text-decoration-none">
+                    <li className="nav-item">Register Course</li>
+                  </Link>
                   <Link to="/od-report" className="text-decoration-none">
                     <li className="nav-item">OD Report</li>
                   </Link>

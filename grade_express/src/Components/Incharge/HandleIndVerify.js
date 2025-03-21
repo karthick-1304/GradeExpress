@@ -48,9 +48,13 @@ const HandleIndVerify = ({user,logout}) => {
   // Compare extracted data
   const compareData = (newData) => {
     console.log("New Extracted Data:", newData);
-    const isMatched = Object.keys(verifiedData).every(
-      (key) => newData[key] === verifiedData[key]
+    const isMatched = Object.keys(newData).every(
+      (key) => key=='badge_type'||'qr_of_certificate'||newData[key] === verifiedData[key]
     );
+    // const isdMatched = Object.keys(verifiedData).every(
+    //   (key) => {console.log('hi',verifiedData[key])}
+    // );
+    console.log('vv',verifiedData,'nn',newData)
 
     setVerificationStatus(isMatched ? "Success ✅" : "Unsuccessful ❌");
   };
