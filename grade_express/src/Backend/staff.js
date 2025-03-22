@@ -1,4 +1,5 @@
 const {pool} =require("./dbConnection");
+const ExcelJS = require("exceljs");
 const getStaff=async (req, res) => {
     try {
       const result = await pool.query('SELECT * FROM staff_info');
@@ -239,8 +240,6 @@ const actionVerification=async (req, res) => {
     if (!tutorWardList || tutorWardList.length === 0) {
       return res.json([]); // No students assigned
     }
-
-    // Convert "{2212075,2212079}" -> ['2212075', '2212079']
     // Ensure tutorWardList is an array
     if (!Array.isArray(tutorWardList)) {
       tutorWardList = tutorWardList[0]; // Extract first result if it's nested
@@ -249,7 +248,6 @@ const actionVerification=async (req, res) => {
     if (!tutorWardList || tutorWardList.length === 0) {
       return res.json([]); // No students assigned
     }
-    console.log("Tutorward Lisjjt:", tutorWardList);
     // Fetch verification details of these students
     const verificationQuery = `
       SELECT vd.student_regno,s.name,vd.course_code,vd.extracted_details FROM verification_details vd join students_info s on s.regno=vd.student_regno WHERE student_regno = ANY($1)
@@ -315,6 +313,23 @@ const getCourseStudents= async (req, res) => {
       res.status(500).send("Server error");
   }
 };
+//Getting the course Incharge
+const getCourseIncharge = async (req, res) => {
+  try {
+    const courseDomain = req.params.courseDomain; // "code" represents the department (e.g., "CSE")
+    console.log("Processing course incharge for course:", courseDomain);
+    const result = await pool.query(
+      "SELECT * FROM staff_info WHERE dept = $1  AND designation LIKE '%Incharge%'", 
+      [courseDomain]
+    );
+    console.log("Course Incharge:", result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+};
+
 //Adding the grade of a student in a course
 const addGrade = async (req, res) => {
   try {
@@ -328,7 +343,8 @@ const addGrade = async (req, res) => {
       );
 
       // Convert scores to numbers
-      const scores = students.rows.map(s => s.score !== null ? parseInteger(s.score) : null);
+      const scores = students.rows.map(s => s.score !== null ? parseInt(s.score) : null);
+
       console.log("Scores:", scores);
 
       // Ensure all students have marks
@@ -371,7 +387,7 @@ const addGrade = async (req, res) => {
                   grades[score] = 'A+';
               } else if (score >= mean) {
                   grades[score] = 'A';
-              } else if (score >= mean - 0.9 * stdDev) {
+              } else  {
                   grades[score] = 'B+';
               }
           });
@@ -392,4 +408,170 @@ const addGrade = async (req, res) => {
       res.status(500).send("Server error");
   }
 };
-  module.exports={getStaff,addStaff,editStaff,deleteStaff,editProfileStaff,getTutorwardStudents,removeStudentFromTutorward,actionVerification,getAllCourses,getCoursesSearch,getCoursesFilter,getCourseStudents,addGrade,getStudentCourses,getEligibleStudents,addStudentsToTutorward,getTutorwardList };
+
+
+const setScore = async (req, res) => {
+  const { regno, course_code, score } = req.body;
+
+  if (!regno || !course_code || score === undefined) {
+    return res.status(400).json({ success: false, message: "Missing required fields" });
+  }
+
+  console.log("Processing score update for student:", regno, "in course:", course_code);
+
+  const query = "UPDATE course_registration SET score = $1 WHERE course_code = $2 AND student_regno = $3";
+
+  try {
+    const result = await pool.query(query, [score, course_code, regno]);  // ✅ PostgreSQL query execution
+
+    if (result.rowCount > 0) {  // ✅ PostgreSQL uses rowCount instead of affectedRows
+      // const query2="delete from verification_details where student_regno=$1 and course_code=$2"; 
+      // const result2 = await pool.query(query2,[regno,course]);
+      // if (result2.rowCount > 0) {
+      //   console.log("Score updated successfully");
+      // } else {
+      //   console.log("Score updated successfully but verification details not found");
+      // }
+      return res.json({ success: true, message: "Score updated successfully" });
+    } else {
+      return res.json({ success: false, message: "No matching record found" });
+    }
+  } catch (err) {
+    console.error("Error updating score:", err);
+    return res.status(500).json({ success: false, message: "Database error" });
+  }
+};
+const getCompletedDistCourses = (req, res) => {
+  console.log("Fetching distinct courses");
+  const query = `SELECT DISTINCT cc.course_code ,cd.name FROM course_completed cc inner join course_details cd on cd.code=cc.course_code order by cc.course_code`;
+  pool.query(query, (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: "Database error" });
+    }
+    // Fix: The results object has a "rows" property which is the array we need to map
+    res.json({ courses: results.rows.map((row) => row.course_code) ,names:results.rows.map((row) => row.name)});
+  });
+};
+const getAllCompletedCourses= (req, res) => {
+  console.log("Fetching distinct courses");
+  const query = `SELECT * from course_completed`;
+  pool.query(query, (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: "Database error" });
+    }
+    // Fix: The results object has a "rows" property which is the array we need to map
+    res.json({ courses: results.rows });
+
+  });
+};
+
+// ✅ Fetch all distinct seasons
+const getSeasons = (req, res) => {
+  const query = `SELECT DISTINCT season FROM course_completed ORDER BY season`;
+  pool.query(query, (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: "Database error" });
+    }
+    // Fix: Access the rows property
+    res.json({ seasons: results.rows.map((row) => row.season) });
+  });
+};
+
+
+
+// ✅ Fetch records based on filters
+const getRecords= (req, res) => {
+  const { course_code, dept, season } = req.query;
+  let query = `SELECT * FROM course_completed cc inner join  students_info ss on cc.student_regno=ss.regno WHERE cc.course_code = $1 `;
+let params = [course_code];
+
+if (dept && dept !== "All") {
+  query += ` AND ss.dept = $${params.length + 1}`;
+  params.push(dept);
+}
+if (season && season !== "All") {
+  query += ` AND cc.season = $${params.length + 1}`;
+  params.push(season);
+}
+query += " ORDER BY ss.regno ,ss.dept , cc.season";
+
+
+pool.query(query, params, (err, results) => {
+  if (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: "Database error" });
+  }
+  // Return the rows array directly
+  res.json(results.rows);
+});
+};
+
+// ✅ Download Excel File
+const generateCourseExcel=async (req, res) => {
+  const { course_code, dept, season } = req.query;
+  //crossOriginIsolated.log("Generating Excel for course:", course_code, "Dept:", dept, "Season:", season);
+
+if (!course_code) {
+  return res.status(400).json({ success: false, message: "Missing course_code parameter" });
+}
+
+let query =`SELECT cc.student_regno,ss.name as studentname,ss.dept ,cd.name as coursename,cd.credits_count,cc.course_code,cc.certificate, cc.score, cc.grade, cc.season FROM course_completed cc inner join  course_details cd on cd.code=cc.course_code inner join students_info ss on cc.student_regno=ss.regno WHERE cc.course_code = $1 `
+let params = [course_code];
+
+if (dept && dept !== "All") {
+  query += ` AND ss.dept = $${params.length + 1}`;
+  params.push(dept);
+}
+if (season && season !== "All") {
+  query += ` AND cc.season = $${params.length + 1}`;
+  params.push(season);
+}
+query += " ORDER BY ss.regno ,ss.dept , cc.season";
+console.log(query);
+
+
+  pool.query(query, params, async (err, results) => {
+    
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: "Database error" });
+    }
+    console.log(results.rows);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Course Data");
+
+    worksheet.columns = [
+      { header: "Student RegNo", key: "student_regno", width: 15 },
+      { header: "Student Name", key: "studentname", width: 20 },
+      { header: "Course Code", key: "course_code", width: 15 },
+      { header: "Department", key: "dept", width: 40 },
+      { header: "Course Name", key: "coursename", width: 40 },
+      { header: "Credits Count", key: "credits_count", width: 15 },
+      { header: "Grade", key: "grade", width: 10 },
+      { header: "Score", key: "score", width: 10 },
+      { header: "Certificate Link", key: "certificate", width: 20 },
+      { header: "NPTEL-Season", key: "season", width: 15 },
+    ];
+
+    results.rows.forEach((row) => {
+      worksheet.addRow(row);
+    });
+
+    const fileName = `${course_code}_${dept || "All"}_${season || "All"}.xlsx`;
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
+
+    await workbook.xlsx.write(res);
+    res.end();
+  });
+};
+
+  module.exports={getStaff,addStaff,editStaff,deleteStaff,editProfileStaff,getTutorwardStudents,removeStudentFromTutorward,actionVerification,getAllCourses,getCoursesSearch,getCoursesFilter,getCourseStudents,addGrade,getStudentCourses,getEligibleStudents,addStudentsToTutorward,getTutorwardList ,getCourseIncharge,setScore,generateCourseExcel,getSeasons,getRecords,getCompletedDistCourses,getAllCompletedCourses};

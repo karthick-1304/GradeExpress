@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 const app = express();
 const {pool,login,authMiddleware,checkToken}=require( "./dbConnection.js");
 const{uploadStudent}=require("./admin.js");
-const {getStaff, addStaff, editStaff, deleteStaff, editProfileStaff,getTutorwardStudents,removeStudentFromTutorward,getAllCourses,getCoursesSearch,getCoursesFilter,getCourseStudents,addGrade,getStudentCourses,getEligibleStudents,actionVerification,addStudentsToTutorward,getTutorwardList }=require("./staff.js")
+const {getStaff, addStaff, editStaff, deleteStaff, editProfileStaff,getTutorwardStudents,removeStudentFromTutorward,getAllCourses,getCoursesSearch,getCoursesFilter,getCourseStudents,addGrade,getStudentCourses,getEligibleStudents,actionVerification,addStudentsToTutorward,getTutorwardList,getCourseIncharge,setScore,generateCourseExcel,getRecords,getSeasons,getCompletedDistCourses ,getAllCompletedCourses}=require("./staff.js")
 const {getCourses,addCourse,editCourse, deleteCourse}=require("./course.js");
 const { deleteStudent, getStudents, editStudent } = require("./student.js");
 const { fetchEnrollments, enrollCourse, deleteEnrollment, updateEnrollment } = require("./process.js");
@@ -89,6 +89,17 @@ app.get("/courses/filter/:dept", getCoursesFilter);
 app.get("/courses/:code/students", getCourseStudents);
 //Adding the grade of a student in a course
 app.get("/courses/:code/grade", addGrade);
+//getCourseIncharge
+app.get("/courses/:courseDomain/incharge",getCourseIncharge);
+
+//setScore
+app.post("/update-score",setScore);
+app.get("/download-excel", generateCourseExcel);
+app.get("/records",getRecords);
+app.get("/seasons",getSeasons);
+app.get("/completed_dist_courses",getCompletedDistCourses)
+app.get("/getAllCourses",getAllCompletedCourses);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
