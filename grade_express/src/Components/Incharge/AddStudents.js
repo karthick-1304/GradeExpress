@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import RoleBasedHeader from "../Common_pages/RoleBasedHeader";
 
-const AddStudents = ({ user }) => {
+const AddStudents = ({ user,logout }) => {
     const navigate = useNavigate();
     const [students, setStudents] = useState([]);
     const [selectedStudents, setSelectedStudents] = useState([]);
@@ -72,6 +73,7 @@ const AddStudents = ({ user }) => {
 
     return (
         <div className="container mt-4">
+            <RoleBasedHeader user={user} logout={logout}/> 
             <button className="btn btn-outline-dark mb-3" onClick={() => navigate("/StaffHomePage")}>
                 ⬅ Back
             </button>

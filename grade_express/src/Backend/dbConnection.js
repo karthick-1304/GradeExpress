@@ -3,10 +3,10 @@ const pool= new Pool({
   host: 'localhost', 
   port: 5432, 
   user: 'postgres', // Replace with your PostgreSQL username
-  password: 'karthi@3737', // Replace with your PostgreSQL password
-  database: 'gradeExpress', // Replace with your PostgreSQL database name
+  password: '2004', // Replace with your PostgreSQL password
+  database: 'gradeExpress_merge', // Replace with your PostgreSQL database name
   timezone: 'Asia/Kolkata',
-});
+}); 
 
 const jwt = require("jsonwebtoken");
 const login=async (req, res) => {

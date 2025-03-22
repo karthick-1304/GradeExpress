@@ -1,8 +1,8 @@
 import React from "react";
 import { Table, Button, Container, Card } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-
-const DisplayCourseInfo = () => {
+import RoleBasedHeader from "../Common_pages/RoleBasedHeader";
+const DisplayCourseInfo = ({user,logout}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { enrollment } = location.state || {};
@@ -15,6 +15,7 @@ const DisplayCourseInfo = () => {
 
   return (
     <div className="student-outer-container">
+      <RoleBasedHeader user={user} logout={logout}/> 
     <Container className="p-5 d-flex justify-content-center">
       <Card className="shadow-lg p-4" style={{ width: "60%", borderRadius: "12px", background: "linear-gradient(135deg, #1e3c72, #2a5298)", color: "white" }}>
         <Card.Header className="text-center py-3" style={{ fontSize: "24px", fontWeight: "bold", background: "rgba(255,255,255,0.1)", borderRadius: "8px" }}>

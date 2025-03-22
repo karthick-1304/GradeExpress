@@ -1,19 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, act } from 'react';
 import "./AddCourse.css";
 import axios from 'axios';
 import { Table, Button, Modal, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import RoleBasedHeader from '../Common_pages/RoleBasedHeader';
 const AddCourse = ({user,logout}) => {
     const [courses, setCourses] = useState([]);
     const [displayCourses, setDisplayCourses] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [showDeadLineModal, setShowDeadLineModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [searchName,setSearchName]=useState();
+    const [activeSection,setActiveSection]=useState("home");
+    const [selectedProcess,setSelectedProcess]=useState("none");
+    const [deadLineCourseData,setDeadLineCourseData]=useState({
+        st_date:new Date().toISOString().split('T')[0],
+        end_date:new Date().toISOString().split('T')[0]
+    })
     const [formData, setFormData] = useState({
-        domain: "",
         name: "",
-        iscredit: false,
+        credits_count: 0,
         code: "",
         no_of_weeks: "",
         st_date: new Date().toISOString().split('T')[0], // Default to current date
@@ -24,10 +31,9 @@ const AddCourse = ({user,logout}) => {
     });
     const fetchCourses = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/getCourses');
+            const response = await axios.get(`http://localhost:5000/getCourses/${user.dept}`);
             setCourses(response.data);
             setDisplayCourses(response.data);
-            console.log(response.data);
         } catch (error) {
             console.error("Error fetching courses:", error);
         }
@@ -45,8 +51,17 @@ const AddCourse = ({user,logout}) => {
         });
     };
 
+    const handleDeadLineChange=(e)=>{
+        const { name, value } = e.target;
+        setDeadLineCourseData({
+            ...deadLineCourseData,
+             [name]: value
+        });
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        formData["domain"]=user.dept;
         try {
             if (editMode) {
                 await axios.put(`http://localhost:5000/editCourse/${selectedCourse.code}`, formData);
@@ -59,13 +74,44 @@ const AddCourse = ({user,logout}) => {
             console.error("Error submitting course:", error);
         }
     };
+
+    const handleDeadLineSubmit = async (e) => {
+        e.preventDefault();
+        console.log(deadLineCourseData);
+        deadLineCourseData["prefix"]=selectedProcess;
+        if(!deadLineCourseData.st_date||!deadLineCourseData.end_date){
+            alert("Enter Date");return;
+        }
+
+        try {
+            await axios.put(`http://localhost:5000/editDeadLineCourse/${selectedCourse.code}`, deadLineCourseData);
+            fetchCourses();
+            handleCloseModal();
+        } catch (error) {
+            console.error("Error submitting course:", error);
+        }
+    };
+    
+
+    const handleDeadLineSelect = async () => {
+       
+        if(selectedProcess=='none'){
+            alert("Select Process");
+            return;}
+        setActiveSection("action");
+        const newDeadLineData = {
+            st_date: selectedCourse[`${selectedProcess}st_date`]?.split('T')[0] || new Date().toISOString().split('T')[0],
+            end_date:selectedCourse[`${selectedProcess}end_date`]?.split('T')[0] || new Date().toISOString().split('T')[0],
+        };
+        setDeadLineCourseData(newDeadLineData);
+        
+    };
     
     const handleAddCourse = () => {
         setEditMode(false);
         setFormData({
-            domain: "",
             name: "",
-            iscredit: false,
+            credits_count: 0,
             code: "",
             no_of_weeks: "",
             st_date: new Date().toISOString().split('T')[0], 
@@ -87,6 +133,11 @@ const AddCourse = ({user,logout}) => {
         });
         setShowModal(true);
     };
+    const handleDeadLineCourse = (course) => {
+        setShowDeadLineModal(true);
+        setSelectedCourse(course);
+        setShowDeadLineModal(true);
+    };
 
     const handleDeleteCourse = async (code) => {
         try {
@@ -99,72 +150,35 @@ const AddCourse = ({user,logout}) => {
 
     const handleCloseModal = () => {
         setShowModal(false);
+        setShowDeadLineModal(false);
         setSelectedCourse(null);
+        setActiveSection("home");
     };
      
     function search(e) {
         const value = e.target.value;
         setSearchName(value);
-    
-        // Use updated state inside useEffect if needed
-        console.log("Search Query:", value);
-    
         if (value) {
             setDisplayCourses(courses.filter(course => course.name.toLowerCase().includes(value.toLowerCase())));
-            console.log("Filtered Courses:", courses);
         }
         else    
             setDisplayCourses(courses);
     }
-
     return (
         <div className='outer-container-incharge'>
-            <nav className="navbar navbar-expand-lg shadow py-3">
-        <div className="container">
-          <h1 style={{ color: "##F7DBA7", fontSize: "23px" }}>
-            WELCOME {user?.name?.toUpperCase()} !
-          </h1>
-          <div
-            className="collapse navbar-collapse justify-content-end"
-            id="navbarNav"
-          >
-            <ul className="navbar-nav gap-4">
-              <Link to={`/${user.role}HomePage`}className="text-decoration-none">
-                <li className="nav-item">Home</li>
-              </Link>
-              {user.designation === "Incharge" && (
-                <>
-                  <Link to="/addCourse" className="text-decoration-none">
-                    <li className="nav-item">Add Course</li>
-                  </Link>
-                  <Link to="/od-report" className="text-decoration-none">
-                    <li className="nav-item">OD Report</li>
-                  </Link>
-                </>
-              )}
-              <Link to="" className="text-decoration-none">
-                <li className="nav-item">Verify</li>
-              </Link>
-              <Link to="/"  onClick={()=>logout()} className="text-decoration-none">
-                <li className="nav-item">Logout</li>
-              </Link>
-            </ul>
-          </div>
-        </div>
-      </nav>
+           <RoleBasedHeader user={user} logout={logout}/>
             <div className="admin-page">
                 <h1 className='course-h2'>Course Management</h1>
                 <div className='course-search-container'>
                 <Button onClick={handleAddCourse}>Add Course</Button>
                 <input type="text"  placeholder="Search by Course Name: " className='course-search' onChange={search} />
                 </div>
-                <Table  className='course-table'striped bordered hover>
+                <Table  className='course-table'striped  hover>
                     <thead>
                         <tr>
                             <th>Course Code</th>
                             <th>Name</th>
-                            <th>Domain</th>
-                            <th>Credit Type</th>
+                            <th>No Of Credit</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -173,10 +187,10 @@ const AddCourse = ({user,logout}) => {
                             <tr key={course.code}>
                                 <td>{course.code}</td>
                                 <td>{course.name}</td>
-                                <td>{course.domain}</td>
-                                <td>{course.iscredit?"Yes":"No"}</td>
+                                <td>{course.credits_count>0?"Yes":"No"}</td>
                                 <td>
-                                    <Button variant="warning" onClick={() => handleEditCourse(course)}>Edit</Button>{' '}
+                                    <Button variant="success" onClick={() => handleEditCourse(course)}>Edit</Button>{' '}
+                                    <Button variant="warning" onClick={() => handleDeadLineCourse(course)}>DeadLine</Button>{' '}
                                     <Button variant="danger" onClick={() => handleDeleteCourse(course.code)}>Delete</Button>
                                 </td>
                             </tr>
@@ -184,7 +198,43 @@ const AddCourse = ({user,logout}) => {
                     </tbody>
                 </Table>
             </div>
-
+            <Modal className='deadline-model-form' show={showDeadLineModal} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Time Line Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form >
+                        {activeSection=='home'&&(
+                            <>
+                                <select
+                                id="" value={selectedProcess}
+                                onChange={(e) => setSelectedProcess(e.target.value)}>
+                                    <option value="" hidden>Select Process</option>
+                                    <option value="enroll_">Enroll</option>
+                                    <option value="payment_">Payment</option>
+                                    <option value="hallticket_">HallTicket</option>
+                                    <option value="certificate_">Certificate</option>
+                                    <option value="acceptance_">Grade Acceptance</option>
+                                </select>
+                                <Button variant="primary"  onClick={handleDeadLineSelect}>Submit</Button>
+                            </>
+                        )}
+                        {activeSection=='action'&&(
+                            <>
+                                 <Form.Group>
+                                    <Form.Label>Start Date</Form.Label>
+                                    <Form.Control type="date" name="st_date" value={deadLineCourseData.st_date} onChange={handleDeadLineChange} required />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label>End Date</Form.Label>
+                                    <Form.Control type="date" name="end_date" value={deadLineCourseData.end_date} onChange={handleDeadLineChange} required />
+                                </Form.Group>
+                                <Button variant="primary" type="submit" onClick={handleDeadLineSubmit}>Update</Button>
+                            </>
+                        )}
+                    </Form>
+                </Modal.Body>
+            </Modal>
             <Modal className='addcourse-model-form' show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>{editMode ? "Edit Course" : "Add Course"}</Modal.Title>
@@ -200,8 +250,8 @@ const AddCourse = ({user,logout}) => {
                             <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Domain</Form.Label>
-                            <Form.Control type="text" name="domain" value={formData.domain} onChange={handleChange} required />
+                            <Form.Label> Number of Credits</Form.Label>
+                            <Form.Control type="number" name="credits_count" value={formData.credits_count} onChange={handleChange} required />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Instructor</Form.Label>
@@ -227,9 +277,7 @@ const AddCourse = ({user,logout}) => {
                             <Form.Label>Assignment Drive Link</Form.Label>
                             <Form.Control type="text" name="assignment_drive_link" value={formData.assignment_drive_link} onChange={handleChange} required />
                         </Form.Group>
-                        <Form.Group controlId="iscredit">
-                            <Form.Check type="checkbox" label="Credit Course" name="iscredit" checked={formData.iscredit} onChange={handleChange} />
-                        </Form.Group>
+                        
                         <Button variant="primary" type="submit">
                             {editMode ? "Update" : "Add"}
                         </Button>

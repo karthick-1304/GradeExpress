@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useLocation,Link } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import RoleBasedHeader from "../Common_pages/RoleBasedHeader";
 
-const StudentCourses = () => {
+const StudentCourses = ({user,logout}) => {
     const { regno } = useParams();
     const [studentInfo, setStudentInfo] = useState(null);
     const location = useLocation();
@@ -23,6 +24,7 @@ const StudentCourses = () => {
 
     return (
         <div className="container my-5">
+            <RoleBasedHeader user={user} logout={logout}/> 
             {/* Student Info Card */}
             <div className="card shadow-lg p-4 text-center mb-4">
                 {studentInfo && (

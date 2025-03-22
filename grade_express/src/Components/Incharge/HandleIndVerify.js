@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import jsQR from "jsqr"; // Import jsQR for QR code scanning
+import RoleBasedHeader from "../Common_pages/RoleBasedHeader";
 
-
-const HandleIndVerify = () => {
+const HandleIndVerify = ({user,logout}) => {
   const location = useLocation();
   const  verifiedData = location.state.details || {}; // Full JSON data
   console.log("Verified Data:", verifiedData);
@@ -48,9 +48,13 @@ const HandleIndVerify = () => {
   // Compare extracted data
   const compareData = (newData) => {
     console.log("New Extracted Data:", newData);
-    const isMatched = Object.keys(verifiedData).every(
-      (key) => newData[key] === verifiedData[key]
+    const isMatched = Object.keys(newData).every(
+      (key) => key=='badge_type'||'qr_of_certificate'||newData[key] === verifiedData[key]
     );
+    // const isdMatched = Object.keys(verifiedData).every(
+    //   (key) => {console.log('hi',verifiedData[key])}
+    // );
+    console.log('vv',verifiedData,'nn',newData)
 
     setVerificationStatus(isMatched ? "Success ✅" : "Unsuccessful ❌");
   };
@@ -97,6 +101,7 @@ const HandleIndVerify = () => {
 
   return (
     <div className="container">
+      <RoleBasedHeader user={user} logout={logout}/> 
       <h2>Certificate Verification</h2>
 
       {/* Display extracted data */}

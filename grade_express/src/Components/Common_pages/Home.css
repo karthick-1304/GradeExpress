@@ -3,6 +3,7 @@
 }
 .outer-container {
   background-image: url('../../Asserts/bg4.webp'); 
+  /* background: linear-gradient(to bottom, #05052b, #3025a2); */
   /* background-size:contain; */
   background-size : cover;
   /* background-position: center; */
