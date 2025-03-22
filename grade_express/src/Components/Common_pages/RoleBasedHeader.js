@@ -34,7 +34,7 @@ const RoleBasedHeader = ({user,logout}) => {
               { user?.designation?.includes("Incharge") && (
                 <>
                   <Link to="/addCourse" className="text-decoration-none">
-                    <li className="nav-item">Add Course</li>
+                    <li className="nav-item">Handle Course</li>
                   </Link>
                   <Link to="/registerCourse" className="text-decoration-none">
                     <li className="nav-item">Register Course</li>

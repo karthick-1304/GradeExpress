@@ -14,6 +14,11 @@ const Enroll = ({ user,logout }) => {
   const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState("");
+  const [check,setCheck]=useState({
+    payment:false,
+    hallticket:false,
+    certificate:false
+  });
   const [newEnrollment, setNewEnrollment] = useState({
     register_number: user.regno,
     course_code: "",
@@ -66,6 +71,73 @@ const Enroll = ({ user,logout }) => {
     fetchCourses();
     fetchEnrollments();
   }, []);
+
+  useEffect(()=>{
+    if(!editingEnrollment)
+      return ;
+    const selected = courses.find((course) => course.code === editingEnrollment.code);
+    console.log(selected);
+    if (activeSection === "payment") {
+      const currentDate = new Date();
+      const startDate = new Date(selected.payment_st_date);
+      const endDate = new Date(selected.payment_end_date);
+  
+      if (currentDate < startDate || currentDate > endDate) {
+          setCheck(prevCheck => ({
+            ...prevCheck,
+            payment: false
+        }));
+          return;
+      }
+      else{
+        setCheck(prevCheck => ({
+          ...prevCheck,
+          payment: true
+      }));
+      
+      }
+  }
+
+      else if (activeSection === "hallticket") {
+        const currentDate = new Date();
+        const startDate = new Date(selected.hallticket_st_date);
+        const endDate = new Date(selected.hallticket_end_date);
+
+        if (currentDate < startDate || currentDate > endDate) {
+          setCheck(prevCheck => ({
+            ...prevCheck,
+            hallticket: false
+        }));
+            return;
+        }
+        else  
+        setCheck(prevCheck => ({
+          ...prevCheck,
+          hallticket: true
+      }));
+      
+    }
+    else if (activeSection === "certificate") {
+      const currentDate = new Date();
+      const startDate = new Date(selected.certificate_st_date);
+      const endDate = new Date(selected.certificate_end_date);
+
+      if (currentDate < startDate || currentDate > endDate) {
+        setCheck(prevCheck => ({
+          ...prevCheck,
+          certificate: false
+      }));
+          return;
+      }
+      else  
+      setCheck(prevCheck => ({
+        ...prevCheck,
+        certificate: true
+    }));
+    
+    }
+    console.log(activeSection,check);
+  },[activeSection,editingEnrollment]);
 
   // Handle selection of a course
   const handleCourseSelect = (e) => {
@@ -138,6 +210,42 @@ const Enroll = ({ user,logout }) => {
     formData.append("course_code", editingEnrollment.code);
     formData.append("certificate", editData.certificate);
     formData.append("section", activeSection);
+    /* const selected = courses.find((course) => course.code === editingEnrollment.code);
+    console.log(selected);
+    if (activeSection === "payment") {
+      const currentDate = new Date();
+      const startDate = new Date(selected.payment_st_date);
+      const endDate = new Date(selected.payment_end_date);
+  
+      if (currentDate < startDate || currentDate > endDate) {
+          alert("Payment proof Feeding is locked");
+          return;
+      }
+  }
+
+      else if (activeSection === "hallticket") {
+        const currentDate = new Date();
+        const startDate = new Date(selected.hallticket_st_date);
+        const endDate = new Date(selected.hallticket_end_date);
+
+        if (currentDate < startDate || currentDate > endDate) {
+            alert("hallticket Data Feeding is locked");
+            return;
+        }
+    }
+    else if (activeSection === "certificate") {
+      const currentDate = new Date();
+      const startDate = new Date(selected.certificate_st_date);
+      const endDate = new Date(selected.certificate_end_date);
+
+      if (currentDate < startDate || currentDate > endDate) {
+          alert("Certificate Data Feeding is locked");
+          return;
+      }
+    } */
+    alert("Success");
+    return;
+   
     try {
       if (activeSection == "certificate") {
         for (let pair of formData.entries()) {
@@ -361,13 +469,13 @@ const Enroll = ({ user,logout }) => {
       >
         <Modal.Header closeButton>
           <div className="form-header">
-            <Button onClick={() => setActiveSection("payment")}>
+            <Button  onClick={() => setActiveSection("payment")}>
               Payment Proof
             </Button>
-            <Button onClick={() => setActiveSection("hallticket")}>
+            <Button  onClick={() => setActiveSection("hallticket")}>
               Exam Details
             </Button>
-            <Button onClick={() => setActiveSection("certificate")}>
+            <Button   onClick={() => setActiveSection("certificate")}>
               Certificate Proof
             </Button>
           </div>
@@ -376,20 +484,26 @@ const Enroll = ({ user,logout }) => {
         <Modal.Body>
           <Form>
             {/* Payment Proof Section */}
-            {activeSection === "payment" && (
-              <Form.Group>
-                <Form.Label>Payment Proof</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="payment_proof"
-                  value={editData.payment_proof}
-                  onChange={handleEditChange}
-                />
-              </Form.Group>
-            )}
+            {activeSection === "payment" ? (
+    check.payment ? (
+        <Form.Group>
+            <Form.Label>Payment Proof</Form.Label>
+            <Form.Control
+                type="text"
+                name="payment_proof"
+                value={editData.payment_proof}
+                onChange={handleEditChange}
+            />
+        </Form.Group>
+    ) : (
+        <p>Payment Proof is Closed</p>
+    )
+) : null}
+
+
 
             {/* Hallticket Proof Section */}
-            {activeSection === "hallticket" && (
+            {activeSection === "hallticket" ?(check.hallticket?(
               <>
                 <Form.Group>
                   <Form.Label>Exam Venue</Form.Label>
@@ -422,10 +536,12 @@ const Enroll = ({ user,logout }) => {
                   />
                 </Form.Group>
               </>
-            )}
+            ):(
+              <p> Hallticket Feeding is Closed</p>
+          )):null}
 
             {/* Certificate Proof Section */}
-            {activeSection === "certificate" && (
+            {activeSection === "certificate" ?(check.certificate?(
               <>
                 <Form.Group>
                   <Form.Label>Certificate Link</Form.Label>
@@ -473,7 +589,9 @@ const Enroll = ({ user,logout }) => {
                   />
                 </Form.Group>
               </>
-            )}
+            ):(
+              <p>Certificate Feeding is Closed</p>
+          )):null}
           </Form>
         </Modal.Body>
 

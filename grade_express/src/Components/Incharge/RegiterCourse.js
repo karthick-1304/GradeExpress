@@ -83,8 +83,8 @@ const RegiterCourse = ({user,logout}) => {
             <h1 className='course-h2'>Course Management</h1>
             
             {/* Filters */}
-            <div className='course-search-container'>
-                    <input type="text" placeholder="Search by Course Name or Code" className='course-search' onChange={(e) => setSearchText(e.target.value)} />
+            <div className='register-course-search-container'>
+                    <input type="text" placeholder="Search by Course Name or Code" className='register-course-search' onChange={(e) => setSearchText(e.target.value)} />
                     <Form.Select className='filter-dropdown' onChange={(e) => setSelectedDept(e.target.value)}>
                         <option value="">Filter by Department</option>
                         {[...new Set(courses.map(course => course.domain))].map((dept, index) => (
@@ -105,7 +105,7 @@ const RegiterCourse = ({user,logout}) => {
                 
             
             {/* Table */}
-            <Table className='course-table' striped bordered hover>
+            <Table className='course-table' striped hover>
                 <thead>
                     <tr>
                         <th>Course Code</th>

@@ -134,7 +134,7 @@ function App() {
         <Route path='/addCourse' element={<AddCourse user={user} setUser={setUser} logout={logout}/>}></Route>
         <Route path='/registerCourse' element={<RegiterCourse user={user} setUser={setUser} logout={logout}/>}></Route>
         <Route path='/AdminHomePage' element={<AdminPage get={get} logout={logout}/>}></Route>
-        <Route path='/enroll' element={<Enroll user={user} setUser={setUser}/>}></Route>
+        <Route path='/enroll' element={<Enroll user={user} setUser={setUser} logout={logout}/>}></Route>
         <Route path='/verifyCertificate' element={<Verify user={user} setUser={setUser}logout={logout}/>}></Route>
         <Route path='/course-details' element={<DisplayCourse_info user={user} logout={logout}/>}></Route>
         <Route path='/od-report' element={<OdList  user={user} setUser={setUser}logout={logout}/>}></Route>

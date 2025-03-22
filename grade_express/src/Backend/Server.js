@@ -10,7 +10,7 @@ const app = express();
 const {pool,login,authMiddleware,checkToken}=require( "./dbConnection.js");
 const{uploadStudent}=require("./admin.js");
 const {getStaff, addStaff, editStaff, deleteStaff, editProfileStaff,getTutorwardStudents,removeStudentFromTutorward,getAllCourses,getCoursesSearch,getCoursesFilter,getCourseStudents,addGrade,getStudentCourses,getEligibleStudents,actionVerification,addStudentsToTutorward,getTutorwardList }=require("./staff.js")
-const {getCourses,addCourse,editCourse, deleteCourse, registerCourse, getAllotedCourses}=require("./course.js");
+const {getCourses,addCourse,editCourse, deleteCourse, registerCourse, getAllotedCourses, editDeadLineCourse}=require("./course.js");
 const { deleteStudent, getStudents, editStudent } = require("./student.js");
 const { fetchEnrollments, enrollCourse, deleteEnrollment, updateEnrollment } = require("./process.js");
 const { forgetPassword } = require("./email.js");
@@ -45,6 +45,7 @@ const upload = multer({ storage: storage , limits: { fileSize: 10 * 1024 * 1024 
   app.put('/registerCourse/:code', registerCourse);
   app.post('/addCourse',addCourse);
   app.put('/editCourse/:code',editCourse);
+  app.put('/editDeadLineCourse/:code',editDeadLineCourse);
   app.delete('/deleteCourse/:code', deleteCourse);
   app.post('/addStaffs', addStaff);
   app.put('/editStaffs', editStaff);

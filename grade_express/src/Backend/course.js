@@ -4,7 +4,7 @@ const getCourses=async (req, res) => {
       console.log(dept);
 
       try {
-        let query = 'SELECT * FROM course_details';
+        let query = 'SELECT *, enroll_st_date::TEXT,enroll_end_date::TEXT,payment_st_date::TEXT,payment_end_date::TEXT,hallticket_st_date::TEXT,hallticket_end_date::TEXT,certificate_st_date::TEXT,certificate_end_date::TEXT,acceptance_st_date::TEXT,acceptance_end_date::TEXT FROM course_details';
         let params = [];
       
         if (dept !== 'all') {
@@ -15,13 +15,13 @@ const getCourses=async (req, res) => {
         const result = await pool.query(query, params);
         res.json(result.rows);
       } catch (err) {
+        console.log(err);
         res.status(500).send(err.message);
       }
   };
   const getAllotedCourses=async (req, res) => {
     const{dept}=req.params;
     console.log(dept);
-
     try {
       let query = 'SELECT * FROM course_details WHERE $1 = ANY(depts_enroll) ORDER BY name ASC';
       const result = await pool.query(query, [dept]);
@@ -118,4 +118,31 @@ const editCourse= async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
   }
-  module.exports={getCourses,addCourse,editCourse,deleteCourse,registerCourse,getAllotedCourses};
+
+  
+const editDeadLineCourse= async (req, res) => {
+  const {code}=req.params;
+  const {  st_date, end_date,prefix } = req.body;
+  console.log(prefix,code,st_date,end_date);
+  try {
+    const result = await pool.query(
+      `UPDATE course_details 
+       SET ${prefix}st_date = $1, ${prefix}end_date = $2 
+       WHERE code = $3`,
+      [st_date, end_date, code]
+  );
+  
+
+      if (result.rowCount === 0) {
+          return res.status(404).json({ message: "Course not found" });
+      }
+      res.json({ message: "Course DeadLine updated successfully" });
+  } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: err.message });
+  }
+};
+
+
+
+  module.exports={getCourses,addCourse,editCourse,deleteCourse,registerCourse,getAllotedCourses,editDeadLineCourse};
