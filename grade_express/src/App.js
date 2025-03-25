@@ -28,6 +28,8 @@ import DemoGraph from './Components/Incharge/DemoGraph.js';
 import HandleIndVerify from './Components/Incharge/HandleIndVerify.js';
 import RoleBasedHeader from './Components/Common_pages/RoleBasedHeader.js';
 import RegiterCourse from './Components/Incharge/RegiterCourse.js';
+import CourseDataExport from './Components/Incharge/CourseDataExport.js';
+
 function App() {
    const [user,setUser]=useState({});
    const navigae=useNavigate();
@@ -144,7 +146,7 @@ function App() {
         <Route path="/student/:regno/courses" element={<StudentCourses user={user} logout={logout} />} />
         <Route path="/handleIndVerify" element={<HandleIndVerify user={user} setUser={setUser}logout={logout}/>} />
 
-    
+        <Route path="/export" element={<CourseDataExport user={user} setUser={setUser}logout={logout}/>} />
         <Route path="/graph" element={<DemoGraph />} />
      </Routes>
      <Toaster/>

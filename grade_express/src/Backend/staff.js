@@ -304,7 +304,7 @@ const getCourseStudents= async (req, res) => {
   try {
       const { code } = req.params;
       const result = await pool.query(
-          "SELECT cr.student_regno, cr.score ,cr.grade ,s.regno,s.name FROM course_registration cr join students_info s on cr.student_regno=s.regno WHERE course_code = $1", 
+          "SELECT cr.student_regno, cr.score ,cr.grade ,s.regno,s.name FROM course_registration cr join students_info s on cr.student_regno=s.regno WHERE course_code = $1 order by s.regno", 
           [code]
       );
       res.json(result.rows);
@@ -330,88 +330,111 @@ const getCourseIncharge = async (req, res) => {
   }
 };
 
-//Adding the grade of a student in a course
 const addGrade = async (req, res) => {
   try {
-      const { code } = req.params;
-      console.log("Processing grading for course:", code);
+    const { code } = req.params;
+    console.log("Processing grading for course:", code);
 
-      // Fetch students' scores
-      const students = await pool.query(
-          "SELECT student_regno, score FROM course_registration WHERE course_code = $1",
-          [code]
+    // Fetch students' scores
+    const students = await pool.query(
+      "SELECT student_regno, score FROM course_registration WHERE course_code = $1",
+      [code]
+    );
+
+    // Convert scores to numbers
+    const scores = students.rows.map(s => s.score !== null ? parseInt(s.score) : null);
+    console.log("Scores:", scores);
+
+    // Ensure all students have marks
+    if (scores.includes(null)) {
+      return res.status(400).json({ message: "All students must have marks before grading." });
+    }
+
+    const totalStudents = scores.length;
+    let grades = {};
+    let gradeRanges = {};  // Object to store grade ranges
+
+    if (totalStudents < 25) {
+      // **ABSOLUTE GRADING**
+      const maxScore = Math.max(...scores);
+      const minPassingScore = 50;
+      let k = (maxScore - minPassingScore) / 5;
+      if (k < 7) k = 7; // Ensure minimum k is 7
+
+      // Define grade ranges
+      gradeRanges = {
+        'O': [maxScore, maxScore - 0 * k],
+        'A+': [maxScore - 0 * k - 1, maxScore - 1 * k],
+        'A': [maxScore - 1 * k - 1, maxScore - 2 * k],
+        'B+': [maxScore - 2 * k - 1, maxScore - 3 * k],
+        'B': [maxScore - 3 * k - 1, minPassingScore]
+      };
+
+      // Assign grades
+      scores.forEach(score => {
+        if (score >= gradeRanges['O'][1]) grades[score] = 'O';
+        else if (score >= gradeRanges['A+'][1]) grades[score] = 'A+';
+        else if (score >= gradeRanges['A'][1]) grades[score] = 'A';
+        else if (score >= gradeRanges['B+'][1]) grades[score] = 'B+';
+        else grades[score] = 'B';
+      });
+
+    } else {
+      // **RELATIVE GRADING**
+      const mean = scores.reduce((sum, val) => sum + val, 0) / totalStudents;
+      const stdDev = Math.sqrt(scores.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / totalStudents);
+
+      console.log("Mean:", mean, "Standard Deviation:", stdDev);
+
+      // Define grade ranges
+      gradeRanges = {
+        'O': [100, Math.ceil(mean + 1.65 * stdDev)],
+        'A+': [Math.ceil(mean + 1.65 * stdDev) - 1, Math.ceil(mean + 0.85 * stdDev)],
+        'A': [Math.ceil(mean + 0.85 * stdDev) - 1, Math.ceil(mean)],
+        'B+': [Math.ceil(mean) - 1, Math.floor(mean - 1.8 * stdDev)],
+        'B': [Math.floor(mean - 1.8 * stdDev) - 1, 50]
+      };
+
+      // Assign grades
+      scores.forEach(score => {
+        if (score < gradeRanges['B'][1] || score < 50) {
+          grades[score] = 'B';
+        } else if (score >= gradeRanges['O'][1]) {
+          grades[score] = 'O';
+        } else if (score >= gradeRanges['A+'][1]) {
+          grades[score] = 'A+';
+        } else if (score >= gradeRanges['A'][1]) {
+          grades[score] = 'A';
+        } else {
+          grades[score] = 'B+';
+        }
+      });
+    }
+
+    // Update grades in the database
+    await Promise.all(students.rows.map(student => {
+      const numericScore = parseFloat(student.score);
+      return pool.query(
+        "UPDATE course_registration SET grade = $1 WHERE student_regno = $2 AND course_code = $3",
+        [grades[numericScore], student.student_regno, code]
       );
+    }));
 
-      // Convert scores to numbers
-      const scores = students.rows.map(s => s.score !== null ? parseInt(s.score) : null);
+    res.json({
+      message: "Grading applied successfully.",
+      gradeRanges
+    });
 
-      console.log("Scores:", scores);
-
-      // Ensure all students have marks
-      if (scores.includes(null)) {
-          return res.status(400).json({ message: "All students must have marks before grading." });
-      }
-
-      const totalStudents = scores.length;
-      let grades = {};
-
-      if (totalStudents < 25) {
-          // **ABSOLUTE GRADING**
-          const maxScore = Math.max(...scores);
-          const minPassingScore = 50;
-          let k = (maxScore - minPassingScore) / 5;
-          if (k < 7) k = 7; // If k is less than 7, set k to 7 as per rule
-
-          scores.forEach(score => {
-              if (score >= maxScore - 0 * k) grades[score] = 'O';
-              else if (score >= maxScore - 1 * k) grades[score] = 'A+';
-              else if (score >= maxScore - 2 * k) grades[score] = 'A';
-              else if (score >= maxScore - 3 * k) grades[score] = 'B+';
-              else if (score >= maxScore - 4 * k) grades[score] = 'B';
-              else grades[score] = 'B';
-          });
-
-      } else {
-          // **RELATIVE GRADING**
-          const mean = scores.reduce((sum, val) => sum + val, 0) / totalStudents;
-          const stdDev = Math.sqrt(scores.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / totalStudents);
-
-          console.log("Mean:", mean, "Standard Deviation:", stdDev);
-
-          scores.forEach(score => {
-              if (score < mean - 1.8 * stdDev || score < 50) {
-                  grades[score] = 'B';
-              } else if (score >= mean + 1.65 * stdDev) {
-                  grades[score] = 'O';
-              } else if (score >= mean + 0.85 * stdDev) {
-                  grades[score] = 'A+';
-              } else if (score >= mean) {
-                  grades[score] = 'A';
-              } else  {
-                  grades[score] = 'B+';
-              }
-          });
-      }
-
-      // Update grades in the database
-      await Promise.all(students.rows.map(student => {
-          const numericScore = parseFloat(student.score);
-          return pool.query(
-              "UPDATE course_registration SET grade = $1 WHERE student_regno = $2 AND course_code = $3",
-              [grades[numericScore], student.student_regno, code]
-          );
-      }));
-
-      res.json({ message: "Grading applied successfully." });
   } catch (err) {
-      console.error(err);
-      res.status(500).send("Server error");
+    console.error(err);
+    res.status(500).send("Server error");
   }
 };
 
 
+
 const setScore = async (req, res) => {
-  const { regno, course_code, score } = req.body;
+  const { regno, course_code, score ,link} = req.body;
 
   if (!regno || !course_code || score === undefined) {
     return res.status(400).json({ success: false, message: "Missing required fields" });
@@ -420,6 +443,7 @@ const setScore = async (req, res) => {
   console.log("Processing score update for student:", regno, "in course:", course_code);
 
   const query = "UPDATE course_registration SET score = $1 WHERE course_code = $2 AND student_regno = $3";
+  const query2="UPDATE course_registration SET certificate = $1 WHERE course_code = $2 AND student_regno = $3";
 
   try {
     const result = await pool.query(query, [score, course_code, regno]);  // ✅ PostgreSQL query execution
@@ -440,6 +464,19 @@ const setScore = async (req, res) => {
     console.error("Error updating score:", err);
     return res.status(500).json({ success: false, message: "Database error" });
   }
+  try{
+    const result2 = await pool.query(query2, [link, course_code, regno]);  // ✅ PostgreSQL query execution
+    if (result2.rowCount > 0) {  // ✅ PostgreSQL uses rowCount instead of affectedRows
+      console.log("Certificate Link updated successfully");
+    } else {
+      console.log("Certificate Link updated successfully but verification details not found");
+    }
+
+  } catch (err) { 
+    console.error("Error updating certificate link:", err);
+    return res.status(500).json({ success: false, message: "Database error" });
+  }
+    
 };
 const getCompletedDistCourses = (req, res) => {
   console.log("Fetching distinct courses");

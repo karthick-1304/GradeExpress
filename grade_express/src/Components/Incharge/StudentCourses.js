@@ -63,10 +63,15 @@ const StudentCourses = ({user,logout}) => {
                                 <td>{course.name}</td>
                                 <td>{course.score}</td>
                                 <td className="fw-bold">{course.grade}</td>
-                                <td>{course.certificate}</td>
+                                <td>🎓&nbsp;&nbsp;
+                                    <a href={course.certificate} target="_blank" rel="noopener noreferrer">
+                                    View Certificate
+                                    </a>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
+
                 </table>
             </div>
 

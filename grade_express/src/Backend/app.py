@@ -7,6 +7,9 @@ import os
 from werkzeug.utils import secure_filename
 from flask import Flask
 from flask_cors import CORS
+import cv2
+import numpy as np
+from pyzbar.pyzbar import decode
 
 app = Flask(__name__)
 CORS(app)  # Allow React frontend to communicate with Flask backend
@@ -33,6 +36,14 @@ def extract_text_from_area(pdf_path, rect):
 
 # Function to extract an image from the PDF at the specified coordinates
 # Function to extract image from the PDF at the specified coordinates
+
+def extract_certificate_id(url):
+    start_index = url.find("NPTEL")  # Find the starting position of "NPTEL"
+    if start_index != -1:
+        certificate_id = url[start_index:]  # Extract from "NPTEL" onward
+        return f"https://nptel.ac.in/noc/E_Certificate/{certificate_id}"
+    return None 
+
 def extract_image_from_area(pdf_path, rect, num):
     document = fitz.open(pdf_path)
     page = document.load_page(0)
@@ -45,6 +56,17 @@ def extract_image_from_area(pdf_path, rect, num):
     
     # Return the URL of the image
     image_url = f"/static/{os.path.basename(img_path)}"
+    if(num==3):
+        img_cv = np.array(img)
+        img_cv = cv2.cvtColor(img_cv, cv2.COLOR_RGB2GRAY)  # Convert to grayscale
+
+    # Decode the QR code
+        qr_codes = decode(img_cv)
+        if qr_codes:
+            url=qr_codes[0].data.decode("utf-8") 
+            new_url = extract_certificate_id(url)
+            return new_url
+        return None
     return image_url
 
 
@@ -109,6 +131,7 @@ def upload_file():
     file.save(pdf_path)
 
     details = extract_certificate_details(pdf_path)
+    print(details)
     return jsonify(details)
 
 if __name__ == '__main__':

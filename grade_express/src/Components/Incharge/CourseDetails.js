@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useParams, useLocation ,Link} from "react-router-dom";
 import { Container, Button, Table, Nav, Tab, Card, Spinner, Alert } from "react-bootstrap";
 import { BsGraphUp, BsPeople, BsJournalBookmark } from "react-icons/bs";
@@ -12,6 +12,7 @@ import RoleBasedHeader from "../Common_pages/RoleBasedHeader";
 const CourseDetails = ({logout}) => {
   const { courseCode } = useParams();
   const location = useLocation();
+  const [gradeRanges, setGradeRanges] = useState({});
   const { user, courseInfo } = location.state;
   console.log("course_info",courseInfo);
   console.log("user",user);
@@ -24,26 +25,44 @@ const CourseDetails = ({logout}) => {
   const [chartSeries, setChartSeries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [gradingApplied, setGradingApplied] = useState(false);
+  const [courseIncharge, setCourseIncharge] = useState([]);
 
   const loggedInStudent = students.find((s) => s.student_regno === user.regno);
 
   useEffect(() => {
-    fetchCourseStudents();
-  }, []);
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchIncharge();
+      await fetchCourseStudents();
+      setLoading(false); 
+    };
+  
+    fetchData();
+  }, [location]); 
 
   const fetchCourseStudents = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/courses/${courseCode}/students`);
-      setStudents(response.data);
-      setLoading(false);
-
+      console.log("Fetched students:", response.data);
+  
+      setStudents(response.data); // 🔹 Update state
       if (response.data.some((s) => s.grade)) {
         setGradingApplied(true);
         prepareChartData(response.data);
       }
     } catch (error) {
       console.error("Error fetching students", error);
-      setLoading(false);
+    }
+  };
+  
+  const fetchIncharge = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/courses/${courseInfo['domain']}/incharge`);
+      console.log("Fetched incharge:", response.data);
+  
+      setCourseIncharge(response.data[0]); // 🔹 Update state
+    } catch (error) {
+      console.error("Error fetching incharge", error);
     }
   };
 
@@ -75,6 +94,7 @@ const CourseDetails = ({logout}) => {
   const handleGrading = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/courses/${courseCode}/grade`);
+      setGradeRanges(response.data.gradeRanges);
       toast.success("Graded Successfully!", {
                 position: "top-center",
                 duration: 5000,
@@ -93,9 +113,9 @@ const CourseDetails = ({logout}) => {
     <RoleBasedHeader user={user} logout={logout}/> 
    
     <Container className="course-container mt-4">
-      
+    
       {/* 🔹 COURSE HEADER */}
-      {courseInfo && (
+      {courseInfo &&loading===false&& (
         <Card className="course-header-card shadow-lg p-4">
           <Card.Body className="d-flex justify-content-between align-items-center">
             <div>
@@ -105,22 +125,23 @@ const CourseDetails = ({logout}) => {
               <p>
                 <strong>Duration:</strong> {courseInfo.weeks} weeks | <strong>Credits:</strong> {courseInfo.credits}
               </p>
-              {isStaff && (
+              {students.length>0&&isStaff && (
                 <Button variant="success" onClick={handleGrading} className="proceed-button">
                   Proceed Grade
                 </Button>
               )}
             </div>
 
-            {isStaff && (
-              <div className="text-end">
-                <h5 className="text-info">{user.name}</h5>
+            { courseIncharge && (
+                <div className="text-end">
+                <h5 className="text-info">{courseIncharge?.name}</h5>
                 <p>
-                  <strong>Dept:</strong> {user.dept} <br />
-                  <strong>Staff Code:</strong> {user.regno}
+                  <strong>Dept:</strong> {courseIncharge?.dept} <br />
+                  <strong>Staff Code:</strong> {courseIncharge?.phone_no}
                 </p>
               </div>
-            )}
+              )}
+
           </Card.Body>
         </Card>
       )}
@@ -216,39 +237,53 @@ const CourseDetails = ({logout}) => {
 
           {/* 👥 PARTICIPANTS SECTION */}
           <Tab.Pane eventKey="participants">
-            {loading ? (
-              <Spinner animation="border" variant="primary" />
-            ) : (
-              <Table striped bordered hover responsive className="student-table shadow-sm">
-                <thead>
-                  <tr className="bg-dark text-white">
-                    <th>Reg No</th>
-                    <th>Name</th>
-                    <th>Marks</th>
-                    <th>Grade</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loggedInStudent && (
-                    <tr className="table-success">
-                      <td><strong>{loggedInStudent.student_regno}</strong></td>
-                      <td><strong>{loggedInStudent.name} (You)</strong></td>
-                      <td><strong>{loggedInStudent.score}</strong></td>
-                      <td><strong>{loggedInStudent.grade || "N/A"}</strong></td>
-                    </tr>
-                  )}
-                  {students.map((s) => (
-                    <tr key={s.student_regno}>
-                      <td>{s.student_regno}</td>
-                      <td>{s.name}</td>
-                      <td>{s.score}</td>
-                      <td>{s.grade || "N/A"}</td>
-                    </tr>
+  {loading ? (
+    <Spinner animation="border" variant="primary" />
+  ) : students.length > 0 ? (
+    <Table striped bordered hover responsive className="student-table shadow-sm">
+      <thead>
+        <tr className="bg-dark text-white">
+          <th>Reg No</th>
+          <th>Name</th>
+          <th>Marks</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        {loggedInStudent && (
+          <tr className="table-success">
+            <td><strong>{loggedInStudent.student_regno}</strong></td>
+            <td><strong>{loggedInStudent.name} (You)</strong></td>
+            <td><strong>{loggedInStudent.score}</strong></td>
+            <td><strong>{loggedInStudent.grade || "N/A"}</strong></td>
+          </tr>
+        )}
+        {students.map((s) => (
+          <tr key={s.student_regno}>
+            <td>{s.student_regno}</td>
+            <td>{s.name}</td>
+            <td>{s.score|| "N/A"}</td>
+            <td>{s.grade || "N/A"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  ) : (
+    <p className="text-center text-muted">No students list available.</p>
+  )}
+</Tab.Pane>
+      {Object.keys(gradeRanges).length > 0 && (
+              <div>
+                <h3>Grade Ranges:</h3>
+                <ul>
+                  {Object.entries(gradeRanges).map(([grade, range]) => (
+                    <li key={grade}>
+                      {grade}: {range[0]} - {range[1]}
+                    </li>
                   ))}
-                </tbody>
-              </Table>
+                </ul>
+              </div>
             )}
-          </Tab.Pane>
           <Tab.Pane eventKey="gradeCurve">
             <Card className="shadow-sm p-3">
               <h4 className="text-primary">📈 Grade Distribution Curve</h4>
