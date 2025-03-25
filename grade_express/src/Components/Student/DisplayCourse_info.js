@@ -56,6 +56,37 @@ const DisplayCourseInfo = ({user,logout}) => {
               <th style={{ background: "#ffd700", color: "#222" }}>Exam Time</th>
               <td>{enrollment.exam_time}</td>
             </tr>
+            {enrollment.grade !== null && (
+                <tr>
+                  <th style={{ background: "#ffd700", color: "#222" }}>Grade Accepted</th>
+                  <td>
+                  <Button
+                    variant="success"
+                    style={{
+                      width: "80px",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      marginRight: "10px",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    Yes
+                  </Button>
+
+                  <Button
+                    variant="danger"
+                    style={{
+                      width: "80px",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    No
+                  </Button>
+                </td>
+                </tr>
+              )}
           </tbody>
         </Table>
 

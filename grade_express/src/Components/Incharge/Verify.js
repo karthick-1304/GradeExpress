@@ -27,8 +27,8 @@ const Verify = ({user,setUser,logout}) => {
   }, [location]);
 
 
-  const handleRowClick = (details) => {
-    navigate("/handleIndVerify", { state: { details } });
+  const handleRowClick = (details,code,reg_num) => {
+    navigate("/handleIndVerify", { state: { details,code,reg_num } });
   };
 
 console.log(verificationData);
@@ -50,7 +50,6 @@ console.log(verificationData);
                           <th scope="col">Reg No</th>
                           <th scope="col">Name</th>
                           <th scope="col">Course Code</th>
-                          <th scope="col">Score</th>
                           <th scope="col">Certificate</th>
                       </tr>
                       </thead>
@@ -58,22 +57,35 @@ console.log(verificationData);
                           {verificationData.map((cert, index) => {
                               const details = cert.extracted_details;
                               return (
-                                <tr key={index} className="text-center" onClick={() => handleRowClick(details)}>
+                                <tr key={index} className="text-center" onClick={() => handleRowClick(details,cert.course_code,cert.student_regno)}>
                                 <td className="fw-semibold">{cert.student_regno}</td>
                                 <td className="fw-semibold">{cert.name}</td>
                                 <td>{cert.course_code}</td>
-                                <td className="fw-bold text-success">{details.consolidated_score}</td>
                                 <td>
-                                  <a
-                                    href={details.certificate_link}
-                                    className="btn btn-outline-success btn-sm rounded-pill px-3 shadow-sm"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()} // Prevent row click from triggering when clicking the link
-                                  >
-                                    🎓 View Certificate
-                                  </a>
-                                </td>
+                                <a
+  href={details?.certificate_link ? (details.certificate_link.startsWith("http") ? details.certificate_link : `https://${details.certificate_link}`) : "#"}
+  className="btn btn-outline-success btn-sm rounded-pill px-3 shadow-sm"
+  target="_blank"
+  rel="noopener noreferrer"
+  onClick={(e) => {
+    e.stopPropagation();
+    if (details?.certificate_link) {
+      window.open(
+        details.certificate_link.startsWith("http") 
+          ? details.certificate_link 
+          : `https://${details.certificate_link}`,
+        "_blank"
+      );
+    } else {
+      alert("Certificate link is missing!");
+    }
+  }}
+>
+  🎓 View Certificate
+</a>
+
+                                  </td>
+
                               </tr>                              
                               );
                           })}
@@ -82,7 +94,7 @@ console.log(verificationData);
               </div>
           ) : (
               <div className="alert alert-warning text-center fs-5 fw-bold shadow-sm">
-                  ⚠ No verification records found for your students.
+                  ⚠ No verification request.
               </div>
           )}
       </div>
