@@ -124,7 +124,50 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
 
   return (
     <div className="outer-container-incharge">
-      <RoleBasedHeader user={user} logout={logout}/>
+      <nav className="navbar navbar-expand-lg shadow py-3">
+        <div className="container">
+          <h1 style={{ color: "##F7DBA7", fontSize: "23px" }}>
+            Welcome {user?.name?.toUpperCase()} !!!
+          </h1>
+          <div
+            className="collapse navbar-collapse justify-content-end"
+            id="navbarNav"
+          >
+            <ul className="navbar-nav gap-4">
+              <Link to={`/${user.role}HomePage`}className="text-decoration-none">
+                <li className="nav-item">Home</li>
+              </Link>
+              <Link to="/courses" state={{ user }} className="text-decoration-none">
+                <li className="nav-item">Courses</li>
+              </Link>
+              {Array.isArray(user.designation) && user.designation.includes("Incharge") && (
+                <>
+                  <Link to="/addCourse" className="text-decoration-none">
+                    <li className="nav-item">Add Course</li>
+                  </Link>
+                  <Link to="/od-report" className="text-decoration-none">
+                    <li className="nav-item">OD Report</li>
+                  </Link>
+                  <Link to="/export" className="text-decoration-none">
+                    <li className="nav-item">CourseDataExcel</li>
+                  </Link>
+                </>
+              )}
+              {Array.isArray(user.designation) && user.designation.includes("Tutor")&& (
+                <>
+                <Link to="/verifyCertificate" className="text-decoration-none">
+                <li className="nav-item">Verify</li>
+              </Link>
+                </>
+              )}  
+              <Link to="/"  onClick={()=>logout()} className="text-decoration-none">
+                <li className="nav-item">Logout</li>
+              </Link>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
       <h1 className="student-head">Profile</h1>
       <div className="main1">
         <div className="profile-total">

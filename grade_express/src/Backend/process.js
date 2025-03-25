@@ -14,13 +14,15 @@ const fetchEnrollments=async (req, res) => {
           cr.exam_venue,
           cr.exam_date::TEXT,
           cr.exam_time,
-          c.assignment_drive_link
+          c.assignment_drive_link,
+          cr.grade 
         FROM course_registration cr 
         JOIN course_details c ON c.code = cr.course_code 
         WHERE cr.student_regno = $1 
         ORDER BY c.code ASC`,
         [register_number]
       );
+      console.log(result.rows);
       res.json(result.rows);
     } catch (err) {
       console.error('Error retrieving enrollments:', err);

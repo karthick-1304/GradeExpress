@@ -10,8 +10,8 @@ const app = express();
 const {pool,login,authMiddleware,checkToken}=require( "./dbConnection.js");
 const{uploadStudent}=require("./admin.js");
 
-const {getStaff, addStaff, editStaff, deleteStaff, editProfileStaff,getTutorwardStudents,removeStudentFromTutorward,getAllCourses,getCoursesSearch,getCoursesFilter,getCourseStudents,addGrade,getStudentCourses,getEligibleStudents,actionVerification,addStudentsToTutorward,getTutorwardList, getCourseIncharge, setScore, generateCourseExcel, getRecords, getSeasons, getCompletedDistCourses, getAllCompletedCourses }=require("./staff.js")
-const {getCourses,addCourse,editCourse, deleteCourse, registerCourse, getAllotedCourses, editDeadLineCourse, getCompletedCourses}=require("./course.js");
+const {getStaff, addStaff, editStaff, deleteStaff, editProfileStaff,getTutorwardStudents,removeStudentFromTutorward,getAllCourses,getCoursesSearch,getCoursesFilter,getCourseStudents,addGrade,getStudentCourses,getEligibleStudents,actionVerification,addStudentsToTutorward,getTutorwardList ,getCourseIncharge,setScore,getAllCompletedCourses,getCompletedDistCourses,getRecords,getSeasons,generateCourseExcel}=require("./staff.js")
+const {getCourses,addCourse,editCourse, deleteCourse, registerCourse, getAllotedCourses, editDeadLineCourse}=require("./course.js");
 
 const { deleteStudent, getStudents, editStudent } = require("./student.js");
 const { fetchEnrollments, enrollCourse, deleteEnrollment, updateEnrollment } = require("./process.js");

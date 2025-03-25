@@ -61,6 +61,7 @@ const Enroll = ({ user,logout }) => {
         { register_number: user.regno }
       );
       setEnrollments(response.data);
+      console.log('**',response.data);
       
     } catch (error) {
       console.error("Error fetching enrollments:", error);
