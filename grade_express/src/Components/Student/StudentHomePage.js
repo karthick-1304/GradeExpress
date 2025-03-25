@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { use, useEffect } from 'react'
 import "./StudentHomePage.css";
 import { Link } from 'react-router-dom';
 import IMG from "./student_jump_img.jpg";
@@ -12,12 +12,13 @@ const StudentHomePage = ({user,setUser,logout}) => {
     console.log("student homePage:",user);
     const [showModal, setShowModal] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(user);
+  const [courses,setCourses]=useState([]);
     const student=user;//{name:"SELVA",regno:"2212074",Dept:"CSE",password:"Selva@2004",email:"2212074@nec.edu.in",role:"STUDENT"}
-    const course=[{
+    /* const course=[{
         domain:"BLOCKCHAIN",name:"SOLIDITY",isCredit:true,code:"1234",week:12,st_date:"12/7/2024",end_date:"30/11/2025",instructor:"Mr.Mohaideen",score:89.09,grade:"A+",topper:"ABC",drive_link:"abcd.com" },{
             domain:"PERSONAL DEVELOPMENT",name:"PROFESSIONAL ENGLISH",isCredit:false,code:"2235",week:12,st_date:"12/7/2024",end_date:"30/11/2025",instructor:"Mr.Mohaideen",score:90.03,grade:"-",topper:"ABC",drive_link:"abcd.com" },{
                 domain:"BLOCKCHAIN",name:"BLOCKCHAIN ARCHIETCTURE AND DESIGN",isCredit:true,code:"1236",week:12,st_date:"12/7/2024",end_date:"30/11/2025",instructor:"Mr.Mohaideen",score:89.09,grade:"A+",topper:"ABC",drive_link:"abcd.com" }]
-    const handleEditClick = () => {
+    */ const handleEditClick = () => {
         setUpdatedUser(user); 
         setShowModal(true);
     };
@@ -46,7 +47,26 @@ const StudentHomePage = ({user,setUser,logout}) => {
     });
   });
 
-     };          
+  };    
+
+  const fetchCompletedCourses = async () => {
+    console.log(user?.regno)
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/fetchCompletedCourses/${user?.regno}`,
+      );
+      setCourses(response.data);
+      console.log(response.data);
+      
+    } catch (error) {
+      console.error("Error fetching Completed Courses:", error);
+    }
+  };
+  
+  useEffect(()=>{
+      fetchCompletedCourses();
+  },[user])
+  
 
   return (
     <div className='student-outer-container'>
@@ -148,28 +168,20 @@ const StudentHomePage = ({user,setUser,logout}) => {
                     </div>
                 </div>
 
-                <table className="course-table">
+                <table className="completed-course-table">
                     <thead>
                         <tr>
                         <th>Course Code</th>
                         <th>Course Name</th>
-                        <th>Domain</th>
-                        <th>No of Weeks</th>
-                        <th>Score</th>
-                        <th>Grade</th>
                         <th>Credit Type</th>
                         <th>Certificate</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {course.map((item, index) => (
+                        {courses.map((item, index) => (
                         <tr key={index}>
-                            <td>{item.code}</td>
+                            <td>{item.course_code}</td>
                             <td>{item.name}</td>
-                            <td>{item.domain}</td>
-                            <td>{item.week}</td>
-                            <td>{item.score}</td>
-                            <td>{item.grade}</td>
                             <td>{item.isCredit ? "Yes" : "No"}</td>
                             <td><a href={item.drive_link} target="_blank" rel="noopener noreferrer">Drive Link</a></td>
                         </tr>

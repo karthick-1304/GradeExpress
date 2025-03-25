@@ -10,14 +10,14 @@ const app = express();
 const {pool,login,authMiddleware,checkToken}=require( "./dbConnection.js");
 const{uploadStudent}=require("./admin.js");
 
-const {getStaff, addStaff, editStaff, deleteStaff, editProfileStaff,getTutorwardStudents,removeStudentFromTutorward,getAllCourses,getCoursesSearch,getCoursesFilter,getCourseStudents,addGrade,getStudentCourses,getEligibleStudents,actionVerification,addStudentsToTutorward,getTutorwardList }=require("./staff.js")
-const {getCourses,addCourse,editCourse, deleteCourse, registerCourse, getAllotedCourses, editDeadLineCourse}=require("./course.js");
+const {getStaff, addStaff, editStaff, deleteStaff, editProfileStaff,getTutorwardStudents,removeStudentFromTutorward,getAllCourses,getCoursesSearch,getCoursesFilter,getCourseStudents,addGrade,getStudentCourses,getEligibleStudents,actionVerification,addStudentsToTutorward,getTutorwardList, getCourseIncharge, setScore, generateCourseExcel, getRecords, getSeasons, getCompletedDistCourses, getAllCompletedCourses }=require("./staff.js")
+const {getCourses,addCourse,editCourse, deleteCourse, registerCourse, getAllotedCourses, editDeadLineCourse, getCompletedCourses}=require("./course.js");
 
 const { deleteStudent, getStudents, editStudent } = require("./student.js");
 const { fetchEnrollments, enrollCourse, deleteEnrollment, updateEnrollment } = require("./process.js");
 const { forgetPassword } = require("./email.js");
 const { addVerfication } = require("./verification.js");
-const { getCourseRegistrations, getUniqueExamDates, generateStudentExcel } = require("./OdList.js");
+const { getCourseRegistrations, getUniqueExamDates, generateStudentExcel, getUniqueExamTimes, getUniqueYearsOfJoining } = require("./OdList.js");
 
 app.use(cors()); 
 app.use(express.json());
@@ -57,6 +57,7 @@ const upload = multer({ storage: storage , limits: { fileSize: 10 * 1024 * 1024 
   app.put('/editProfileStudent',editStudent);
   app.put('/editProfileStaff',editProfileStaff);
   app.post('/fetchEnrollments', fetchEnrollments);
+  app.post('/fetchCompletedCourses/:regno', getCompletedCourses);
   app.post('/enrollments', enrollCourse);
   app.post("/deleteEnrollment",deleteEnrollment);
   app.get('/getCoursesToEnroll/:dept', getAllotedCourses);
@@ -67,7 +68,8 @@ const upload = multer({ storage: storage , limits: { fileSize: 10 * 1024 * 1024 
 app.get("/course-registration/:dept", getCourseRegistrations);
   app.get("/exam-dates/:dept", getUniqueExamDates);
   app.get("/generate-excel/:dept/:exam_date", generateStudentExcel);
-
+  app.get("/exam-times/:dept", getUniqueExamTimes);
+  app.get("/year-of-joining/:dept",getUniqueYearsOfJoining);
 
 
 app.get("/:tutorId/listofwardstudents",getTutorwardList );

@@ -13,7 +13,8 @@ const fetchEnrollments=async (req, res) => {
           cr.payment_proof,
           cr.exam_venue,
           cr.exam_date::TEXT,
-          cr.exam_time
+          cr.exam_time,
+          c.assignment_drive_link
         FROM course_registration cr 
         JOIN course_details c ON c.code = cr.course_code 
         WHERE cr.student_regno = $1 

@@ -19,6 +19,21 @@ const getCourses=async (req, res) => {
         res.status(500).send(err.message);
       }
   };
+
+  const getCompletedCourses=async (req, res) => {
+    const{regno}=req.params;
+    // const{regno}=req.body;
+    console.log(regno);
+    try {
+      let query = 'SELECT *,cd.name as name,cd.credits_count as credits_count,cd.domain as domain   FROM course_completed join course_details cd on code=course_code where student_regno=$1';
+      const result = await pool.query(query,[regno]);
+      res.json(result.rows);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err.message);
+    }
+};
+
   const getAllotedCourses=async (req, res) => {
     const{dept}=req.params;
     console.log(dept);
@@ -145,4 +160,4 @@ const editDeadLineCourse= async (req, res) => {
 
 
 
-  module.exports={getCourses,addCourse,editCourse,deleteCourse,registerCourse,getAllotedCourses,editDeadLineCourse};
+  module.exports={getCourses,addCourse,editCourse,deleteCourse,registerCourse,getAllotedCourses,editDeadLineCourse,getCompletedCourses};
