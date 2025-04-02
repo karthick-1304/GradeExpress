@@ -188,7 +188,7 @@ const InchargeHomePage = ({ user, setUser,logout }) => {
             </tr>
             <tr>
               <th>Designation</th>
-              <td>{user.designation}</td>
+              <td>{user.designation.join(", ")}</td>
             </tr>
             <tr>
               <th>Email</th>

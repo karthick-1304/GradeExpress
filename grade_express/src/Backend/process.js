@@ -14,6 +14,7 @@ const fetchEnrollments=async (req, res) => {
           cr.exam_venue,
           cr.exam_date::TEXT,
           cr.exam_time,
+          c.assignment_drive_link,
           cr.grade 
         FROM course_registration cr 
         JOIN course_details c ON c.code = cr.course_code 

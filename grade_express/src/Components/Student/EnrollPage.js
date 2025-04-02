@@ -296,6 +296,8 @@ const Enroll = ({ user,logout }) => {
   };
   async function deleteEnrollment(code) {
     console.log(code, user.regno);
+    if (!window.confirm("Are You Sure?")) 
+      return;  // Stop execution if user clicks "Cancel"
     try {
       await axios.post("http://localhost:5000/deleteEnrollment", {
         regno: user.regno,
@@ -497,7 +499,7 @@ const Enroll = ({ user,logout }) => {
             />
         </Form.Group>
     ) : (
-        <p>Payment Proof is Closed</p>
+      <p className="payment-closed">Payment Proof is Closed</p>
     )
 ) : null}
 
@@ -538,7 +540,7 @@ const Enroll = ({ user,logout }) => {
                 </Form.Group>
               </>
             ):(
-              <p> Hallticket Feeding is Closed</p>
+              <p className="payment-closed"> Hallticket Feeding is Closed</p>
           )):null}
 
             {/* Certificate Proof Section */}
@@ -591,7 +593,7 @@ const Enroll = ({ user,logout }) => {
                 </Form.Group>
               </>
             ):(
-              <p>Certificate Feeding is Closed</p>
+              <p className="payment-closed">Certificate Feeding is Closed</p>
           )):null}
           </Form>
         </Modal.Body>

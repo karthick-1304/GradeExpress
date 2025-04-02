@@ -10,23 +10,29 @@ const getStaff=async (req, res) => {
   };
 
   const addStaff=async (req, res) => {
-    const { regno, name, email, dept, designation, password,phone_no } = req.body;
+    const { regno, name, email, dept, designation, password,phone_no,tutor } = req.body;
+    const extracted_designation=designation.join(",");
     try {
-      await pool.query('INSERT INTO staff_info (regno, name, email, dept, designation, password,phone_no) VALUES ($1, $2, $3, $4, $5, $6,$7)', [regno, name.toUpperCase(), email, dept, designation, password,phone_no]);
+      await pool.query('INSERT INTO staff_info (regno, name, email, dept, designation, password,phone_no,tutor) VALUES ($1, $2, $3, $4, $5, $6,$7,$8)', [regno, name.toUpperCase(), email, dept, extracted_designation, password,phone_no,tutor]);
       res.status(201).send('Staff added');
       console.log("Staff updated");
     } catch (err) {
+      console.log(err);
       res.status(500).send(err.message);
     }
   }
 
   const editStaff=async (req, res) => {        
-    const { regno,name, email, dept, designation, password ,phone_no} = req.body;
+    const { regno,name,designation, email, dept, password ,phone_no,tutor} = req.body;
+    console.log(designation)
+    const extracted_designation = designation.join(",");
+    console.log(extracted_designation);
     try {
-      await pool.query('UPDATE staff_info SET name = $1, email = $2, dept = $3, designation = $4, password = $5, phone_no= $6 WHERE regno = $7', [name, email, dept, designation, password,phone_no, regno]);
+      await pool.query('UPDATE staff_info SET name = $1, email = $2, dept = $3, designation = $4, password = $5, phone_no= $6,tutor=$7 WHERE regno = $8', [name, email, dept, extracted_designation, password,phone_no, tutor,regno]);
       res.send('Staff updated');
       console.log("Staff updated");
     } catch (err) {
+      console.log(err);
       res.status(500).send(err.message);
     }
   };

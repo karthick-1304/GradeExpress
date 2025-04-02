@@ -88,6 +88,7 @@ const AddCourse = ({user,logout}) => {
             fetchCourses();
             handleCloseModal();
         } catch (error) {
+            alert("Check Date Range");
             console.error("Error submitting course:", error);
         }
     };
@@ -140,6 +141,9 @@ const AddCourse = ({user,logout}) => {
     };
 
     const handleDeleteCourse = async (code) => {
+        if (!window.confirm("Are You Sure?")) 
+            return;  // Stop execution if userclicks "Cancel"
+        alert("Ok");
         try {
             await axios.delete(`http://localhost:5000/deleteCourse/${code}`);
             fetchCourses();

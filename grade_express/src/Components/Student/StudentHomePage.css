@@ -80,56 +80,44 @@
 
 }
 
-  .course-table{
+  .completed-course-table{
     background-color:azure;
-    width: 90%;
+    width: 88%;
     padding: 1px;
-    margin: 1% 5%;
+    margin-left:6%;
     color: black;
     border-radius: 10px;
 }
-.course-table {
-    width: 90%;
-    border-collapse: collapse;
-    padding: 1px;
-    margin: 1% 5%;
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    text-align: left;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .course-table thead {
+
+  .completed-course-table thead {
     background-color:rgba(0, 0, 0, 0.837);
     color: white;
     text-transform: uppercase;
   }
   
-  .course-table th, 
-  .course-table td {
+  .completed-course-table th, 
+  .completed-course-table td {
     padding: 12px 15px;
     border-right: 1px solid grey;
     border-bottom: 1px solid #ddd;
   }
   
-  .course-table tbody tr:nth-child(even) {
+  .completed-course-table tbody tr:nth-child(even) {
     background-color: #f3f3f3;
   }
   
-  .course-table tbody tr:hover {
+  .completed-course-table tbody tr:hover {
     background-color: #ffcccb;
     transition: 0.3s ease-in-out;
   }
   
-  .course-table a {
+  .completed-course-table a {
     text-decoration: none;
     color: #ff5733;
     font-weight: bold;
   }
   
-  .course-table a:hover {
+  .completed-course-table a:hover {
     text-decoration: underline;
     color: #c70039;
   }
@@ -307,4 +295,15 @@
 
 .modal-overlay h2{
   color: black;
+}
+
+
+.payment-closed {
+  color: #ff6347; /* Tomato color */
+  font-weight: bold;
+  font-size: 18px;
+  background-color: #f8d7da; /* Light red */
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
 }

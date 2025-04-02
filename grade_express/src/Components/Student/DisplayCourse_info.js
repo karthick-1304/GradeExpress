@@ -6,7 +6,7 @@ const DisplayCourseInfo = ({user,logout}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { enrollment } = location.state || {};
-  console.log(enrollment.exam_date);
+  console.log("Enrollment:",enrollment);
   // enrollment.exam_date=enrollment.exam_date.split("T")[0];
 
   if (!enrollment) {
@@ -35,6 +35,10 @@ const DisplayCourseInfo = ({user,logout}) => {
             <tr>
               <th style={{ background: "#ffd700", color: "#222" }}>Credit Type</th>
               <td>{enrollment.iscredit ? "Yes" : "No"}</td>
+            </tr>
+            <tr>
+              <th style={{ background: "#ffd700", color: "#222" }}>Course Assignment DriveLink</th>
+              <td>{enrollment.assignment_drive_link}</td>
             </tr>
             <tr>
               <th style={{ background: "#ffd700", color: "#222" }}>Enroll Proof</th>
